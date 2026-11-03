@@ -69,7 +69,7 @@ jobs:
         env:
           VITE_APP_NAME: "Co-Auth"
           VITE_REVERB_APP_KEY: ${{ secrets.REVERB_APP_KEY }}
-          VITE_REVERB_HOST: ${{ secrets.AZURE_APP_NAME }}.azurewebsites.net
+          VITE_REVERB_HOST: ${{ secrets.REVERB_HOST || format('{0}.azurewebsites.net', secrets.AZURE_APP_NAME) }}
           VITE_REVERB_PORT: "443"
           VITE_REVERB_SCHEME: https
 
