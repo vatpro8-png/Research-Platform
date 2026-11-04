@@ -15,8 +15,9 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-echo "==> Running Database Migrations..."
+echo "==> Running Database Migrations & Seeders..."
 php artisan migrate --force
+php artisan db:seed --force
 
 echo "==> Starting Laravel Reverb WebSocket Server in Background..."
 php artisan reverb:start --host=127.0.0.1 --port=8081 > /home/site/wwwroot/storage/logs/reverb.log 2>&1 &
