@@ -248,6 +248,134 @@
                             </div>
                         </div>
 
+                        <!-- Workspace View Switcher: Split / Excel Matrix Only / Manuscript Only -->
+                        <div class="workspace-view-switcher" id="workspace-view-switcher" role="tablist">
+                            <span class="view-switch-label">Workspace View:</span>
+                            <div class="view-switch-buttons">
+                                <button type="button" class="view-switch-btn is-active" data-view-mode="split" title="View Manuscript and Excel Matrix side-by-side / stacked">
+                                    <span class="btn-icon">📑</span> Split View (Matrix + Canvas)
+                                </button>
+                                <button type="button" class="view-switch-btn" data-view-mode="excel" title="Full Focus on Microsoft Excel Methodology Matrix">
+                                    <span class="btn-icon">📊</span> Excel Matrix Only
+                                </button>
+                                <button type="button" class="view-switch-btn" data-view-mode="canvas" title="Focus exclusively on the Manuscript Canvas">
+                                    <span class="btn-icon">📄</span> Manuscript Canvas Only
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Microsoft Excel Methodology & Section Governance Matrix Section -->
+                        <section class="excel-matrix-wrapper" id="excel-matrix-wrapper" aria-label="Microsoft Excel Methodology and Section Governance Matrix">
+                            <div class="excel-window-frame">
+                                <!-- Excel Fluent Title Bar -->
+                                <div class="excel-title-bar">
+                                    <div class="excel-title-left">
+                                        <span class="excel-app-icon" title="Microsoft Excel Spreadsheet">📊</span>
+                                        <span class="excel-doc-title">Co-Auth_Methodology_Matrix.xlsx</span>
+                                        <span class="excel-badge-autosave"><i class="autosave-dot"></i> AutoSave On</span>
+                                        <span class="excel-badge-ai"><span class="ai-sparkle">✦</span> Alice (Camber AI): Ready</span>
+                                    </div>
+                                    <div class="excel-title-center">
+                                        <span class="excel-header-subcopy">AI Agent Recommends Methodologies & Sections · Author Can Freely Change & Override Rules</span>
+                                    </div>
+                                    <div class="excel-title-right">
+                                        <button type="button" class="excel-window-btn" id="btn-excel-toggle-collapse" title="Collapse / Expand Spreadsheet">−</button>
+                                    </div>
+                                </div>
+
+                                <!-- Excel Ribbon Bar -->
+                                <div class="excel-ribbon-bar">
+                                    <div class="excel-ribbon-tabs">
+                                        <button type="button" class="excel-ribbon-tab is-active" data-excel-tab="methodology">Methodology & Rules</button>
+                                        <button type="button" class="excel-ribbon-tab" data-excel-tab="ai">AI Agent (Alice)</button>
+                                        <button type="button" class="excel-ribbon-tab" data-excel-tab="author">Author Rules</button>
+                                        <button type="button" class="excel-ribbon-tab" data-excel-tab="export">Export & Sync</button>
+                                    </div>
+                                    <div class="excel-ribbon-actions">
+                                        <button type="button" class="excel-action-btn excel-action-primary" id="btn-excel-ai-recommend" title="Alice AI analyzes the study and recommends optimal section methodologies and rigor rules">
+                                            <span class="btn-icon">🤖</span>
+                                            <span class="btn-text">
+                                                <strong>Ask Alice (AI Recommend)</strong>
+                                                <small>Auto-suggest methodology & rules</small>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="excel-action-btn excel-action-accent" id="btn-excel-apply-canvas" title="Apply the Excel sections, methodologies, and author rules directly to the active paper canvas">
+                                            <span class="btn-icon">⚡</span>
+                                            <span class="btn-text">
+                                                <strong>Apply to Manuscript</strong>
+                                                <small>Sync sections & author rules</small>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="excel-action-btn" id="btn-excel-insert-table" title="Insert publication-ready Methodology Matrix Table into paper">
+                                            <span class="btn-icon">📋</span>
+                                            <span class="btn-text">
+                                                <strong>Insert Table in Paper</strong>
+                                                <small>Embed academic Table 1</small>
+                                            </span>
+                                        </button>
+                                        <div class="excel-action-separator"></div>
+                                        <button type="button" class="excel-tool-icon-btn" id="btn-excel-add-row" title="Insert new section row below">+ Row</button>
+                                        <button type="button" class="excel-tool-icon-btn" id="btn-excel-delete-row" title="Delete selected row">− Row</button>
+                                        <button type="button" class="excel-tool-icon-btn" id="btn-excel-reset" title="Reset to standard methodology outline">↺ Reset</button>
+                                        <button type="button" class="excel-tool-icon-btn" id="btn-excel-export" title="Export spreadsheet as CSV">📥 CSV</button>
+                                    </div>
+                                </div>
+
+                                <!-- Excel Formula Bar -->
+                                <div class="excel-formula-bar">
+                                    <div class="excel-name-box" id="excel-name-box" title="Active Cell Address">D1</div>
+                                    <div class="excel-formula-divider"></div>
+                                    <div class="excel-fx-label" title="Formula & Rule Editor">fx</div>
+                                    <input type="text" class="excel-formula-input" id="excel-formula-input" placeholder="Click any cell or edit author rule here..." autocomplete="off" spellcheck="false">
+                                    <span class="excel-formula-hint">Author Rule Override (Click to edit)</span>
+                                </div>
+
+                                <!-- Excel Grid Scroll Viewport -->
+                                <div class="excel-grid-viewport">
+                                    <table class="excel-table" id="excel-matrix-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="excel-th-corner" title="Select all cells"></th>
+                                                <th class="excel-th-col" data-col="A" style="min-width: 190px;">A<span class="col-name">Section / Chapter</span></th>
+                                                <th class="excel-th-col" data-col="B" style="min-width: 210px;">B<span class="col-name">Methodology & Paradigm</span></th>
+                                                <th class="excel-th-col" data-col="C" style="min-width: 250px;">C<span class="col-name">AI Recommendation (Alice)</span></th>
+                                                <th class="excel-th-col excel-th-author" data-col="D" style="min-width: 280px;">D<span class="col-name">Author Rules & Overrides (You Change)</span></th>
+                                                <th class="excel-th-col" data-col="E" style="min-width: 100px;">E<span class="col-name">Words</span></th>
+                                                <th class="excel-th-col" data-col="F" style="min-width: 85px;">F<span class="col-name">Cites</span></th>
+                                                <th class="excel-th-col" data-col="G" style="min-width: 130px;">G<span class="col-name">Status</span></th>
+                                                <th class="excel-th-col" data-col="H" style="min-width: 75px;">H<span class="col-name">Action</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="excel-tbody">
+                                            <!-- Dynamic Rows populated by workspace.js -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Excel Sheet Tabs & Status Bar -->
+                                <div class="excel-bottom-bar">
+                                    <div class="excel-sheet-tabs">
+                                        <button type="button" class="excel-sheet-tab is-active" data-sheet="1">
+                                            <span class="sheet-icon">📑</span> Sheet1: Methodology & Rules
+                                        </button>
+                                        <button type="button" class="excel-sheet-tab" data-sheet="2">
+                                            <span class="sheet-icon">📑</span> Sheet2: Evaluation Metrics
+                                        </button>
+                                        <button type="button" class="excel-new-sheet-btn" id="btn-excel-new-sheet" title="Add Sheet">+</button>
+                                    </div>
+                                    <div class="excel-status-bar" id="excel-status-bar">
+                                        <span class="status-indicator-ready">READY</span>
+                                        <span class="status-sep">|</span>
+                                        <span id="excel-stat-sections">6 Sections</span>
+                                        <span class="status-sep">|</span>
+                                        <span id="excel-stat-words">Sum Words: 10,700</span>
+                                        <span class="status-sep">|</span>
+                                        <span id="excel-stat-rules">Rules: 6 Active (Click any cell in Column D to change)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
                         <!-- Authentic Paper Sheet Container -->
                         <div class="paper-sheet-viewport">
                             <div class="paper-sheet" id="paper-sheet">
