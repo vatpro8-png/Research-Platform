@@ -1837,5 +1837,287 @@ document.querySelector('#btn-excel-export')?.addEventListener('click', () => {
 // Initialize Excel Matrix on page load
 renderExcelMatrixTable();
 
+// =========================================================================
+// PUBLICATION THEME ENGINE (IEEE, ACM, NATURE, APA 7TH, THESIS)
+// =========================================================================
+
+const paperSheet = document.querySelector('#paper-sheet');
+
+document.querySelectorAll('[data-pub-theme]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-pub-theme]').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+
+        const theme = btn.dataset.pubTheme;
+        if (!paperSheet) return;
+
+        paperSheet.classList.remove('theme-apa', 'theme-ieee', 'theme-acm', 'theme-nature', 'theme-classic');
+        paperSheet.classList.add(`theme-${theme}`);
+
+        // Automatically set canonical layout matching target publication venue
+        if (theme === 'ieee') {
+            document.querySelector('[data-column="two_column"]')?.click();
+            document.querySelector('[data-margin="moderate"]')?.click();
+            document.querySelector('[data-font="serif"]')?.click();
+        } else if (theme === 'acm') {
+            document.querySelector('[data-column="two_column"]')?.click();
+            document.querySelector('[data-margin="narrow"]')?.click();
+            document.querySelector('[data-font="sans"]')?.click();
+        } else if (theme === 'nature') {
+            document.querySelector('[data-column="single_column"]')?.click();
+            document.querySelector('[data-margin="wide"]')?.click();
+            document.querySelector('[data-font="serif"]')?.click();
+        } else if (theme === 'apa') {
+            document.querySelector('[data-column="single_column"]')?.click();
+            document.querySelector('[data-margin="normal"]')?.click();
+            document.querySelector('[data-spacing="2.0"]')?.click();
+            document.querySelector('[data-font="serif"]')?.click();
+        }
+
+        if (saveState) {
+            saveState.textContent = `Applied publication theme: ${theme.toUpperCase()}`;
+        }
+    });
+});
+
+// =========================================================================
+// IMPORT & EXPORT GATEWAY (LATEX, WORD, BIBTEX, RIS, DOI LOOKUP)
+// =========================================================================
+
+const ioDialog = document.querySelector('#io-dialog');
+document.querySelector('#btn-open-io-hub')?.addEventListener('click', () => ioDialog?.showModal());
+
+// Modal Tab Switcher
+document.querySelectorAll('.io-tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.io-tab-btn').forEach((b) => b.classList.remove('is-active'));
+        document.querySelectorAll('.io-panel').forEach((p) => p.classList.remove('is-active'));
+
+        btn.classList.add('is-active');
+        const targetPanel = document.querySelector(`#io-panel-${btn.dataset.ioTab}`);
+        if (targetPanel) targetPanel.classList.add('is-active');
+    });
+});
+
+// Markdown export from IO Hub
+document.querySelector('#btn-io-export-markdown')?.addEventListener('click', () => {
+    document.querySelector('#btn-export-markdown')?.click();
+    ioDialog?.close();
+});
+
+// CSV export from IO Hub
+document.querySelector('#btn-io-export-csv')?.addEventListener('click', () => {
+    document.querySelector('#btn-excel-export')?.click();
+    ioDialog?.close();
+});
+
+// Ingest BibTeX / RIS Batch Ingestion
+const importFileElem = document.querySelector('#import-bibtex-file');
+importFileElem?.addEventListener('change', (e) => {
+    const filename = e.target.files?.[0]?.name || '';
+    const label = document.querySelector('#import-file-name');
+    if (label) label.textContent = filename;
+});
+
+document.querySelector('#io-import-bibtex-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusElem = document.querySelector('#io-import-status');
+    if (statusElem) statusElem.textContent = 'Ingesting references...';
+
+    const formData = new FormData(e.target);
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+    try {
+        const response = await fetch(`/api/v1/projects/${projectId}/citations/import-bibtex`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken || '',
+            },
+            body: formData,
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            if (statusElem) {
+                statusElem.style.color = '#15803d';
+                statusElem.textContent = `✓ ${data.message}`;
+            }
+            fetchProjectCitations();
+            setTimeout(() => {
+                ioDialog?.close();
+                if (statusElem) statusElem.textContent = '';
+            }, 1800);
+        } else {
+            if (statusElem) {
+                statusElem.style.color = '#dc2626';
+                statusElem.textContent = data.message || 'Import failed. Check BibTeX syntax.';
+            }
+        }
+    } catch (err) {
+        if (statusElem) {
+            statusElem.style.color = '#dc2626';
+            statusElem.textContent = 'Server connection error during import.';
+        }
+    }
+});
+
+// DOI Auto-Lookup via Crossref
+let lastFetchedDoiItem = null;
+document.querySelector('#btn-doi-lookup-submit')?.addEventListener('click', async () => {
+    const doiInput = document.querySelector('#doi-lookup-input');
+    const doi = doiInput?.value.trim();
+    const errorElem = document.querySelector('#doi-lookup-error');
+    const resultCard = document.querySelector('#doi-result-card');
+    const btn = document.querySelector('#btn-doi-lookup-submit');
+
+    if (!doi) {
+        if (errorElem) errorElem.textContent = 'Please enter a valid DOI.';
+        return;
+    }
+
+    if (errorElem) errorElem.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Querying Crossref...';
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+    try {
+        const response = await fetch('/api/v1/citations/lookup-doi', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken || '',
+            },
+            body: JSON.stringify({ doi }),
+        });
+
+        const json = await response.json();
+        if (response.ok && json.found) {
+            lastFetchedDoiItem = json.data;
+            document.querySelector('#doi-result-title').textContent = json.data.title;
+            document.querySelector('#doi-result-authors').textContent = json.data.authors;
+            document.querySelector('#doi-result-meta').textContent = `${json.data.source} (${json.data.year}) · Key: ${json.data.key}`;
+            if (resultCard) resultCard.style.display = 'block';
+        } else {
+            if (resultCard) resultCard.style.display = 'none';
+            if (errorElem) errorElem.textContent = json.message || 'No metadata found for this DOI.';
+        }
+    } catch (err) {
+        if (errorElem) errorElem.textContent = 'Failed to connect to DOI registry.';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Fetch Metadata';
+    }
+});
+
+// Add fetched DOI to project citations
+const saveDoiCitation = async (andCite = false) => {
+    if (!lastFetchedDoiItem) return;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+    try {
+        const response = await fetch(`/api/v1/projects/${projectId}/citations`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken || '',
+            },
+            body: JSON.stringify(lastFetchedDoiItem),
+        });
+
+        const json = await response.json();
+        if (response.ok && json.data) {
+            fetchProjectCitations();
+            if (andCite && editor) {
+                insertCitationIntoEditor(json.data);
+            }
+            ioDialog?.close();
+            if (saveState) saveState.textContent = `Added citation: [${json.data.in_text_tag}] ${json.data.title}`;
+        }
+    } catch (err) {
+        console.error('Failed to save DOI citation:', err);
+    }
+};
+
+document.querySelector('#btn-doi-add-library')?.addEventListener('click', () => saveDoiCitation(false));
+document.querySelector('#btn-doi-add-and-cite')?.addEventListener('click', () => saveDoiCitation(true));
+
+// =========================================================================
+// ACADEMIC RIGOR & QUALITY DASHBOARD SCANNER
+// =========================================================================
+
+const scanAcademicRigor = () => {
+    if (!editor) return;
+
+    const text = editor.innerText || '';
+    const wordCount = (text.match(/\b\w+\b/g) || []).length;
+
+    // 1. In-text citations count
+    const citeRefs = editor.querySelectorAll('.cite-ref');
+    const citeCount = citeRefs.length;
+
+    // 2. Citation density per 1,000 words
+    const density = wordCount > 0 ? ((citeCount / wordCount) * 1000).toFixed(1) : '0.0';
+
+    // 3. Scan for uncited empirical assertions
+    const sentences = text.split(/(?<=[.?!])\s+/);
+    const assertionRegex = /\b(\d+%\b|\bp\s*<\s*0\.0\d+|\bsignificant(ly)?\b|\boutperform(s|ed)?\b|\bfirst time\b|\bproven\b|\bdrastic(ally)?\b)/i;
+    const uncitedSentences = [];
+
+    sentences.forEach((s) => {
+        const cleanSentence = s.trim();
+        if (cleanSentence.length > 25 && assertionRegex.test(cleanSentence)) {
+            // Check if sentence lacks citation brackets
+            if (!/\[\d+\]|\(\w+,\s*\d{4}\)/.test(cleanSentence)) {
+                uncitedSentences.push(cleanSentence);
+            }
+        }
+    });
+
+    // Update UI elements
+    const statCitations = document.querySelector('#rigor-stat-citations');
+    const statDensity = document.querySelector('#rigor-stat-density');
+    const statUncited = document.querySelector('#rigor-stat-uncited');
+    const claimsList = document.querySelector('#uncited-claims-list');
+    const overallScore = document.querySelector('#rigor-overall-score');
+
+    if (statCitations) statCitations.textContent = citeCount;
+    if (statDensity) statDensity.textContent = density;
+    if (statUncited) statUncited.textContent = uncitedSentences.length;
+
+    if (claimsList) {
+        if (uncitedSentences.length === 0) {
+            claimsList.innerHTML = `<div style="padding: 10px; color: #166534; background: #f0fdf4; border-radius: 4px;">✓ Zero uncited empirical assertions detected. Excellent scientific rigor!</div>`;
+        } else {
+            claimsList.innerHTML = uncitedSentences.slice(0, 5).map((s) => `
+                <div class="uncited-claim-item">
+                    ⚠️ <strong>Uncited assertion:</strong> "${escapeHtml(s.slice(0, 110))}..."
+                </div>
+            `).join('');
+        }
+    }
+
+    // Compute Overall Rigor Score (base 80 + bonus for citations - penalty for uncited claims)
+    let score = 80;
+    if (citeCount >= 5) score += 10;
+    if (parseFloat(density) >= 3.0) score += 6;
+    score -= Math.min(20, uncitedSentences.length * 4);
+    score = Math.max(50, Math.min(99, score));
+
+    if (overallScore) {
+        overallScore.textContent = `${score}% RIGOR`;
+        overallScore.className = score >= 85 ? 'arch-badge arch-pass' : 'arch-badge arch-warn';
+    }
+};
+
+document.querySelector('#btn-scan-rigor')?.addEventListener('click', scanAcademicRigor);
+
+// Trigger scan when editor changes
+editor?.addEventListener('blur', scanAcademicRigor);
+setTimeout(scanAcademicRigor, 2000);
+
 // Initial Load
 loadWorkspace();

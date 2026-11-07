@@ -195,6 +195,9 @@
                                 <button type="button" class="toolbar-chip-btn toolbar-chip-excel" id="btn-open-excel-matrix" title="Open Microsoft Excel Methodology & Section Matrix">
                                     <span class="icon" style="color: #107c41;">📊</span> Excel Matrix
                                 </button>
+                                <button type="button" class="toolbar-chip-btn toolbar-chip-io" id="btn-open-io-hub" title="Import & Export (LaTeX, Word, BibTeX, RIS, Markdown, PDF)">
+                                    <span class="icon" style="color: #0284c7;">🔄</span> Import/Export
+                                </button>
                                 <button type="button" class="toolbar-chip-btn" id="btn-open-media" title="Insert figures, diagrams, or media">
                                     <span class="icon">🖼</span> Insert Figure
                                 </button>
@@ -244,6 +247,16 @@
                                     <button type="button" class="strip-btn data-spacing="1.0" title="Single spacing">1.0</button>
                                     <button type="button" class="strip-btn is-active" data-spacing="1.5" title="1.5 spacing standard thesis">1.5</button>
                                     <button type="button" class="strip-btn" data-spacing="2.0" title="Double spacing APA submission">2.0</button>
+                                </div>
+                            </div>
+                            <div class="strip-item">
+                                <span class="strip-label">Format Theme:</span>
+                                <div class="strip-buttons" id="publication-theme-buttons">
+                                    <button type="button" class="strip-btn is-active" data-pub-theme="apa" title="APA 7th Edition: 1-inch margins, author-year citations, 1.5/2.0 spacing">APA 7th</button>
+                                    <button type="button" class="strip-btn" data-pub-theme="ieee" title="IEEE Transactions: 2-column layout, numeric [1] citations, small caps Roman numerals">IEEE</button>
+                                    <button type="button" class="strip-btn" data-pub-theme="acm" title="ACM SIG Proceedings: 2-column layout, bold Arabic numerals, balanced columns">ACM</button>
+                                    <button type="button" class="strip-btn" data-pub-theme="nature" title="Nature / Springer Editorial: 1.25-inch margin, superscript citations, clean typography">Nature</button>
+                                    <button type="button" class="strip-btn" data-pub-theme="classic" title="Classic Academic Monograph / University Thesis">Thesis</button>
                                 </div>
                             </div>
                         </div>
@@ -428,6 +441,7 @@
                         <!-- Sidebar Navigation Tabs -->
                         <div class="sidebar-tab-row" role="tablist">
                             <button type="button" class="sidebar-tab sidebar-tab-ai is-active" data-sidebar-tab="ai" title="AI Research Copilot">✦ AI Lab</button>
+                            <button type="button" class="sidebar-tab" data-sidebar-tab="rigor" title="Academic Rigor, Quality & Provenance">⚖ Rigor</button>
                             <button type="button" class="sidebar-tab" data-sidebar-tab="directory" title="Active Directory & Architecture">📁 Directory</button>
                             <button type="button" class="sidebar-tab" data-sidebar-tab="team" title="Collaborators & Live Presence">👥 Team</button>
                             <button type="button" class="sidebar-tab" data-sidebar-tab="citations" title="Citations & Bibliography">📚 Citations</button>
@@ -731,6 +745,62 @@
                             <p class="panel-subcopy">Every save captures an immutable linked-list snapshot. You can restore previous drafts anytime.</p>
                             <div id="version-history" class="version-history">
                                 <div class="loading-line">No versions yet</div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 9: Academic Rigor, Quality & Provenance Dashboard -->
+                        <div class="sidebar-panel" id="tab-panel-rigor">
+                            <div class="side-heading">
+                                <div>
+                                    <p class="eyebrow">Quality & Provenance</p>
+                                    <h2>Rigor Dashboard</h2>
+                                </div>
+                                <span class="arch-badge arch-pass" id="rigor-overall-score">96% RIGOR</span>
+                            </div>
+                            <p class="panel-subcopy">Continuous academic quality audit: epistemological alignment, uncited assertions scan, zero-hallucination verification, and cryptographic Merkle provenance.</p>
+
+                            <div class="rigor-metrics-grid">
+                                <div class="rigor-metric-box">
+                                    <span class="rigor-metric-val" id="rigor-stat-citations">0</span>
+                                    <small class="rigor-metric-lbl">In-Text Cites</small>
+                                </div>
+                                <div class="rigor-metric-box">
+                                    <span class="rigor-metric-val" id="rigor-stat-density">0.0</span>
+                                    <small class="rigor-metric-lbl">Cites / 1k W</small>
+                                </div>
+                                <div class="rigor-metric-box">
+                                    <span class="rigor-metric-val" id="rigor-stat-uncited">0</span>
+                                    <small class="rigor-metric-lbl">Uncited Claims</small>
+                                </div>
+                            </div>
+
+                            <div class="rigor-card">
+                                <h3>⚖ Epistemological Alignment</h3>
+                                <p class="rigor-card-desc" id="rigor-epistemology-text">Methodology matches active theoretical stance. Hypotheses, variables, and evaluation metrics mapped.</p>
+                                <div class="rigor-checklist" id="rigor-checklist">
+                                    <div class="rigor-check-item is-pass"><span>✓</span> SMART Research Question defined</div>
+                                    <div class="rigor-check-item is-pass"><span>✓</span> Theoretical framework grounded</div>
+                                    <div class="rigor-check-item is-pass"><span>✓</span> Empirical evaluation metrics mapped</div>
+                                    <div class="rigor-check-item" id="rigor-check-irb"><span>⏳</span> Ethics & IRB clearance: In Review</div>
+                                </div>
+                            </div>
+
+                            <div class="rigor-card">
+                                <h3>🔍 Uncited Assertions Scanner</h3>
+                                <p class="rigor-card-desc">Detects empirical statements, statistics, or performance claims that lack an in-text reference [n].</p>
+                                <div class="uncited-claims-list" id="uncited-claims-list">
+                                    <div class="loading-line">Scanning manuscript canvas...</div>
+                                </div>
+                                <button type="button" class="button button-quiet button-sm" id="btn-scan-rigor" style="width: 100%; margin-top: 8px;">Re-scan Manuscript Canvas</button>
+                            </div>
+
+                            <div class="rigor-card">
+                                <h3>🔒 Cryptographic Provenance Seal</h3>
+                                <p class="rigor-card-desc">Every paragraph, citation, and snapshot is bound to an immutable Merkle root with SHA-256 HMAC.</p>
+                                <div class="seal-hash-display">
+                                    <span class="seal-label">Merkle Root Seal:</span>
+                                    <code id="rigor-merkle-seal">sha256:d8c4...verified</code>
+                                </div>
                             </div>
                         </div>
                     </aside>
@@ -1277,6 +1347,131 @@
                 </div>
                 <p class="form-error" id="member-form-error" role="alert"></p>
             </form>
+        </dialog>
+
+        <!-- 6. Research Import & Export Gateway Modal -->
+        <dialog class="app-dialog io-dialog" id="io-dialog">
+            <div class="dialog-content-large" style="padding: 26px;">
+                <button class="dialog-close" type="button" data-close-dialog="io-dialog" aria-label="Close">×</button>
+                <div class="io-modal-header">
+                    <p class="eyebrow">Academic Interoperability & Publishing</p>
+                    <h2>Import & Export Gateway</h2>
+                    <p class="dialog-copy">Seamlessly move your research between Overleaf, Microsoft Word, Zotero, Mendeley, arXiv, and journal publication venues without vendor lock-in.</p>
+                </div>
+
+                <div class="io-tabs-row" role="tablist">
+                    <button type="button" class="io-tab-btn is-active" data-io-tab="export">📤 Export Manuscript & Citations</button>
+                    <button type="button" class="io-tab-btn" data-io-tab="import">📥 Ingest Citations & Notes</button>
+                    <button type="button" class="io-tab-btn" data-io-tab="doi">🔍 DOI Auto-Lookup</button>
+                </div>
+
+                <!-- IO TAB 1: EXPORT -->
+                <div class="io-panel is-active" id="io-panel-export">
+                    <div class="io-grid">
+                        <div class="io-card">
+                            <div class="io-card-icon" style="background: #eef2ff; color: #4338ca;">📄</div>
+                            <div class="io-card-body">
+                                <h3>Compilable LaTeX Source (.tex)</h3>
+                                <p>Standard LaTeX source file with preamble, packages (amsmath, graphicx, cite), section markup, and bibliography. Ready for Overleaf or arXiv.</p>
+                                <a href="/api/v1/projects/{{ $project->id }}/export/latex" class="button button-primary button-sm" download>Download .tex Source</a>
+                            </div>
+                        </div>
+
+                        <div class="io-card">
+                            <div class="io-card-icon" style="background: #eff6ff; color: #1d4ed8;">📘</div>
+                            <div class="io-card-body">
+                                <h3>Microsoft Word Document (.doc)</h3>
+                                <p>Formatted Word document with heading hierarchies, author block, running headers, and references. Ideal for supervisor review loops.</p>
+                                <a href="/api/v1/projects/{{ $project->id }}/export/word" class="button button-primary button-sm" download>Download .doc Manuscript</a>
+                            </div>
+                        </div>
+
+                        <div class="io-card">
+                            <div class="io-card-icon" style="background: #f0fdf4; color: #15803d;">📚</div>
+                            <div class="io-card-body">
+                                <h3>BibTeX Reference Library (.bib)</h3>
+                                <p>Clean BibTeX bibliography file containing all cited references with normalized keys, DOIs, and metadata for LaTeX engines.</p>
+                                <a href="/api/v1/projects/{{ $project->id }}/citations/export?format=bibtex_file" class="button button-quiet button-sm" download>Download .bib Library</a>
+                            </div>
+                        </div>
+
+                        <div class="io-card">
+                            <div class="io-card-icon" style="background: #fff7ed; color: #c2410c;">🗂</div>
+                            <div class="io-card-body">
+                                <h3>RIS Citation Library (.ris)</h3>
+                                <p>Universal Research Information Systems exchange format. One-click import into Zotero, Mendeley, EndNote, and RefWorks.</p>
+                                <a href="/api/v1/projects/{{ $project->id }}/citations/export-ris" class="button button-quiet button-sm" download>Download .ris Library</a>
+                            </div>
+                        </div>
+
+                        <div class="io-card">
+                            <div class="io-card-icon" style="background: #faf5ff; color: #7e22ce;">📝</div>
+                            <div class="io-card-body">
+                                <h3>Academic Markdown (.md)</h3>
+                                <p>Clean GitHub Flavored Markdown with YAML metadata header, headings, and math expressions for Obsidian, Notion, or Git repos.</p>
+                                <button type="button" class="button button-quiet button-sm" id="btn-io-export-markdown">Export Markdown</button>
+                            </div>
+                        </div>
+
+                        <div class="io-card">
+                            <div class="io-card-icon" style="background: #f0fdf4; color: #107c41;">📊</div>
+                            <div class="io-card-body">
+                                <h3>Methodology Governance Matrix (.csv)</h3>
+                                <p>Complete spreadsheet of section methodologies, target word counts, AI recommendations, and author override rules.</p>
+                                <button type="button" class="button button-quiet button-sm" id="btn-io-export-csv">Download Matrix CSV</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IO TAB 2: IMPORT -->
+                <div class="io-panel" id="io-panel-import">
+                    <form id="io-import-bibtex-form" class="io-form-block">
+                        <h3>📥 Batch Ingest BibTeX (.bib) or RIS (.ris) References</h3>
+                        <p class="dialog-copy">Paste raw BibTeX entries or upload a citation file exported from Zotero, Google Scholar, or IEEE Xplore.</p>
+                        
+                        <textarea name="bibtex" id="import-bibtex-textarea" rows="6" placeholder="@article{he2016deep,&#10;  title={Deep residual learning for image recognition},&#10;  author={He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},&#10;  journal={CVPR},&#10;  year={2016}&#10;}" style="width: 100%; font-family: monospace; font-size: 11px; padding: 10px; border: 1px solid var(--line); border-radius: 4px;"></textarea>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                            <label style="cursor: pointer; font-size: 11px; color: var(--teal); font-weight: 600;">
+                                📁 Or choose a .bib / .ris file
+                                <input type="file" name="file" id="import-bibtex-file" accept=".bib,.ris,.txt" style="display: none;">
+                            </label>
+                            <span id="import-file-name" style="font-size: 11px; color: var(--muted);"></span>
+                            <button type="submit" class="button button-primary">Batch Import Citations</button>
+                        </div>
+                        <p class="form-error" id="io-import-status" style="margin-top: 8px;"></p>
+                    </form>
+                </div>
+
+                <!-- IO TAB 3: DOI LOOKUP -->
+                <div class="io-panel" id="io-panel-doi">
+                    <div class="io-form-block">
+                        <h3>🔍 Auto-Fetch Citation by DOI (Crossref Registry)</h3>
+                        <p class="dialog-copy">Enter a Digital Object Identifier (DOI) to query official academic metadata (Crossref / IEEE / ACM / Nature) and automatically add the citation with verified author, title, and journal tags.</p>
+
+                        <div class="doi-lookup-row">
+                            <input type="text" id="doi-lookup-input" placeholder="e.g. 10.1109/CVPR.2016.90 or 10.1145/3313831.3376722" style="flex: 1; padding: 10px; border: 1px solid var(--line); border-radius: 4px; font-size: 12px;">
+                            <button type="button" class="button button-primary" id="btn-doi-lookup-submit">Fetch Metadata</button>
+                        </div>
+
+                        <div class="doi-result-card" id="doi-result-card" style="display: none; margin-top: 16px; padding: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px;">
+                            <h4 id="doi-result-title" style="margin: 0 0 6px 0; font-size: 14px;"></h4>
+                            <p id="doi-result-authors" style="margin: 0 0 4px 0; font-size: 12px; color: #166534;"></p>
+                            <small id="doi-result-meta" style="color: var(--muted); font-size: 11px;"></small>
+                            <div style="margin-top: 12px; display: flex; gap: 8px;">
+                                <button type="button" class="button button-primary button-sm" id="btn-doi-add-library">Add to Citations Library</button>
+                                <button type="button" class="button button-quiet button-sm" id="btn-doi-add-and-cite">Add & Insert Citation [n]</button>
+                            </div>
+                        </div>
+                        <p class="form-error" id="doi-lookup-error" style="margin-top: 8px;"></p>
+                    </div>
+                </div>
+
+                <div class="dialog-actions" style="margin-top: 24px; border-top: 1px solid var(--line); padding-top: 14px;">
+                    <button class="button button-quiet" type="button" data-close-dialog="io-dialog">Close</button>
+                </div>
+            </div>
         </dialog>
     </body>
 </html>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AiController;
 use App\Http\Controllers\CitationController;
 use App\Http\Controllers\IntegrationHealthController;
+use App\Http\Controllers\ManuscriptExportController;
 use App\Http\Controllers\PaperController;
 use App\Http\Controllers\ProjectFeedbackController;
 use App\Http\Controllers\ProjectMediaController;
@@ -15,6 +16,7 @@ Route::prefix('v1')->middleware('auth')->group(function (): void {
     Route::post('/projects', [ResearchProjectController::class, 'store']);
     Route::get('/integrations/health', IntegrationHealthController::class);
     Route::get('/ai/status', [AiController::class, 'status']);
+    Route::post('/citations/lookup-doi', [CitationController::class, 'lookupDoi']);
     Route::middleware('project.member')->group(function (): void {
         Route::get('/projects/{project}', [ResearchProjectController::class, 'show']);
         Route::post('/projects/{project}/versions', [ResearchProjectController::class, 'storeVersion']);
@@ -26,8 +28,12 @@ Route::prefix('v1')->middleware('auth')->group(function (): void {
         Route::delete('/projects/{project}/members/{user}', [ResearchProjectController::class, 'removeMember']);
         Route::get('/projects/{project}/citations', [CitationController::class, 'index']);
         Route::get('/projects/{project}/citations/export', [CitationController::class, 'export']);
+        Route::get('/projects/{project}/citations/export-ris', [CitationController::class, 'exportRis']);
         Route::post('/projects/{project}/citations', [CitationController::class, 'store']);
+        Route::post('/projects/{project}/citations/import-bibtex', [CitationController::class, 'importBibtex']);
         Route::delete('/projects/{project}/citations/{citation}', [CitationController::class, 'destroy']);
+        Route::get('/projects/{project}/export/latex', [ManuscriptExportController::class, 'latex']);
+        Route::get('/projects/{project}/export/word', [ManuscriptExportController::class, 'word']);
         Route::get('/projects/{project}/media', [ProjectMediaController::class, 'index']);
         Route::post('/projects/{project}/media', [ProjectMediaController::class, 'store']);
         Route::delete('/projects/{project}/media/{media}', [ProjectMediaController::class, 'destroy']);

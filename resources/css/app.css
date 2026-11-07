@@ -2029,3 +2029,292 @@ body.layout-review .workspace-grid { grid-template-columns: 1.1fr 0.9fr; }
     padding-top: 8px;
 }
 
+/* ================= PUBLICATION THEMES (IEEE, ACM, NATURE, APA) ================= */
+.paper-sheet.theme-ieee {
+    column-count: 2;
+    column-gap: 28px;
+    column-rule: 1px solid #e2e8e0;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 13.5px;
+    line-height: 1.5;
+}
+.paper-sheet.theme-ieee h2 {
+    font-family: 'Times New Roman', Times, serif;
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+    font-size: 15px;
+    text-align: center;
+    border-bottom: 1px solid #172c35;
+    padding-bottom: 4px;
+    column-span: all;
+}
+.paper-sheet.theme-ieee h3 {
+    font-style: italic;
+    font-size: 13px;
+}
+
+.paper-sheet.theme-acm {
+    column-count: 2;
+    column-gap: 24px;
+    font-family: 'Linux Libertine', 'Times New Roman', serif;
+    font-size: 13px;
+    line-height: 1.55;
+}
+.paper-sheet.theme-acm h2 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    border-bottom: 2px solid #007f7a;
+    padding-bottom: 4px;
+    column-span: all;
+}
+
+.paper-sheet.theme-nature {
+    column-count: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    font-family: 'Minion Pro', Georgia, serif;
+    font-size: 15.5px;
+    line-height: 1.75;
+}
+.paper-sheet.theme-nature h2 {
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    color: #111827;
+    margin-top: 28px;
+    border-bottom: none;
+}
+.paper-sheet.theme-nature .cite-ref {
+    vertical-align: super;
+    font-size: 10px;
+    font-weight: 700;
+    color: #0284c7;
+    background: transparent;
+    border: none;
+    padding: 0 1px;
+}
+
+.paper-sheet.theme-apa {
+    column-count: 1;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 15px;
+    line-height: 1.85;
+}
+.paper-sheet.theme-apa h2 {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 24px 0 12px;
+}
+.paper-sheet.theme-apa h3 {
+    text-align: left;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* ================= ACADEMIC RIGOR DASHBOARD ================= */
+.rigor-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 14px 0;
+}
+.rigor-metric-box {
+    background: #f8faf9;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px 8px;
+    text-align: center;
+}
+.rigor-metric-val {
+    display: block;
+    font-size: 20px;
+    font-weight: 800;
+    color: #107c41;
+    letter-spacing: -.03em;
+}
+.rigor-metric-lbl {
+    display: block;
+    font: 9px 'DM Mono', monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+.rigor-card {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px;
+    margin-top: 12px;
+}
+.rigor-card h3 {
+    margin: 0 0 4px 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.rigor-card-desc {
+    margin: 0 0 10px 0;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.45;
+}
+.rigor-checklist {
+    display: grid;
+    gap: 6px;
+    font-size: 11px;
+}
+.rigor-check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: #f9fafb;
+    border-radius: 4px;
+    color: #4b5563;
+}
+.rigor-check-item.is-pass {
+    background: #f0fdf4;
+    color: #166534;
+}
+.rigor-check-item.is-pass span {
+    color: #15803d;
+    font-weight: bold;
+}
+.uncited-claims-list {
+    max-height: 180px;
+    overflow-y: auto;
+    font-size: 11px;
+    border: 1px solid #f3f4f6;
+    border-radius: 4px;
+}
+.uncited-claim-item {
+    padding: 8px 10px;
+    border-bottom: 1px solid #f3f4f6;
+    color: #78350f;
+    background: #fffbeb;
+    line-height: 1.4;
+}
+.uncited-claim-item:last-child {
+    border-bottom: none;
+}
+.seal-hash-display {
+    background: #f3f4f6;
+    padding: 8px 10px;
+    border-radius: 4px;
+    font: 10px 'DM Mono', monospace;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.seal-hash-display code {
+    color: #047857;
+    font-weight: bold;
+}
+
+/* ================= IMPORT & EXPORT GATEWAY DIALOG ================= */
+.io-dialog {
+    max-width: 780px !important;
+    width: 90% !important;
+}
+.io-tabs-row {
+    display: flex;
+    gap: 4px;
+    background: #f1f5f2;
+    padding: 4px;
+    border-radius: 6px;
+    margin: 16px 0;
+}
+.io-tab-btn {
+    border: none;
+    background: transparent;
+    padding: 7px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4b5563;
+    cursor: pointer;
+    transition: all .15s ease;
+}
+.io-tab-btn:hover {
+    color: #111827;
+    background: rgba(255, 255, 255, 0.6);
+}
+.io-tab-btn.is-active {
+    background: #ffffff;
+    color: #0284c7;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.io-panel {
+    display: none;
+}
+.io-panel.is-active {
+    display: block;
+}
+.io-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+@media (max-width: 640px) {
+    .io-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.io-card {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.io-card:hover {
+    border-color: #0284c7;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+}
+.io-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+.io-card-body h3 {
+    margin: 0 0 4px 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #111827;
+}
+.io-card-body p {
+    margin: 0 0 10px 0;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.45;
+}
+.io-form-block {
+    background: #f9fafb;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 18px;
+}
+.io-form-block h3 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 700;
+}
+.doi-lookup-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+
