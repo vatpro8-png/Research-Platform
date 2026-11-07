@@ -104,6 +104,8 @@ class CoreArchitectureAndAiAccessTest extends TestCase
             ->postJson("/api/v1/projects/{$project->id}/ai/summary", [])
             ->assertForbidden()
             ->assertJsonPath('status', 'access_denied');
+
+        config()->set('services.ai.free_access', true);
     }
 
     public function test_ai_gateway_encrypts_and_decrypts_sensitive_payloads_at_rest(): void
@@ -180,5 +182,53 @@ class CoreArchitectureAndAiAccessTest extends TestCase
 
         $this->artisan('ai:check')
             ->assertExitCode(0);
+    }
+
+    public function test_ai_methodology_matrix_endpoint_returns_structured_matrix_with_rules_and_sections(): void
+    {
+        config()->set('services.ai.free_access', true);
+
+        $user = User::factory()->create();
+        $project = ResearchProject::create([
+            'owner_id' => $user->id,
+            'title' => 'Real-Time Collaborative Scientific Writing',
+            'discipline' => 'Computer Science',
+            'methodology' => 'Design science',
+            'research_question' => 'How can AI agents assist thesis authors in maintaining rigorous methodology?',
+        ]);
+        $project->members()->attach($user->id, ['role' => 'student']);
+
+        $response = $this->actingAs($user)
+            ->postJson("/api/v1/projects/{$project->id}/ai/methodology-matrix", []);
+
+        $response->assertOk()
+            ->assertJsonPath('data.overall_methodology', 'Design Science Research (DSR)')
+            ->assertJsonPath('data.matrix.0.section', '1. Introduction & Problem Space')
+            ->assertJsonPath('data.matrix.0.status', 'AI Recommended');
+
+        $this->assertCount(6, $response->json('data.matrix'));
+    }
+
+    public function test_ai_methodology_matrix_respects_qualitative_preference(): void
+    {
+        config()->set('services.ai.free_access', true);
+
+        $user = User::factory()->create();
+        $project = ResearchProject::create([
+            'owner_id' => $user->id,
+            'title' => 'Lived Experience of Doctoral Researchers',
+            'discipline' => 'Education',
+            'methodology' => 'Qualitative',
+        ]);
+        $project->members()->attach($user->id, ['role' => 'student']);
+
+        $response = $this->actingAs($user)
+            ->postJson("/api/v1/projects/{$project->id}/ai/methodology-matrix", [
+                'methodology_preference' => 'Qualitative',
+            ]);
+
+        $response->assertOk()
+            ->assertJsonPath('data.overall_methodology', 'Qualitative Inquiry (Constructivism)')
+            ->assertJsonPath('data.matrix.0.methodology', 'Contextual Inquiry & Problem Framing');
     }
 }

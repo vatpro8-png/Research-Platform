@@ -37,6 +37,7 @@ Route::prefix('v1')->middleware('auth')->group(function (): void {
         Route::post('/projects/{project}/feedback', [ProjectFeedbackController::class, 'store']);
         Route::post('/projects/{project}/ai/summary', [AiController::class, 'summarize'])->middleware('ai.access');
         Route::post('/projects/{project}/ai/evaluate', [AiController::class, 'evaluate'])->middleware('ai.access');
+        Route::post('/projects/{project}/ai/methodology-matrix', [AiController::class, 'recommendMethodologyMatrix'])->middleware('ai.access');
         Route::get('/projects/{project}/papers', [PaperController::class, 'index']);
         Route::post('/projects/{project}/papers', [PaperController::class, 'store']);
     });
