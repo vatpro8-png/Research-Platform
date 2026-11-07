@@ -88,6 +88,16 @@ return [
         ],
     ],
 
+    'camber' => [
+        'agent_url' => env('CAMBER_AGENT_URL', 'https://app.cambercloud.com/agents/hafizurrahman78232878/Thesis_Copilot'),
+        'base_url' => env('CAMBER_BASE_URL', 'https://app.cambercloud.com/api/v1'),
+        'key' => env('CAMBER_API_KEY'),
+        'model' => env('CAMBER_MODEL', 'Thesis_Copilot'),
+        'free_models' => [
+            'Thesis_Copilot' => 'Alice · Thesis Co-Pilot (Camber Cloud)',
+        ],
+    ],
+
     'mcp' => [
         'access_token' => env('MCP_ACCESS_TOKEN'),
     ],

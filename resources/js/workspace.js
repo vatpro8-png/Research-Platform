@@ -26,9 +26,11 @@ const aiAgents = document.querySelectorAll('[data-ai-agent]');
 
 const updateAiIdentity = (model = '') => {
     const normalizedModel = model.toLowerCase();
-    let identity = { key: 'gemini', name: 'Google Gemini 2.5 Flash' };
+    let identity = { key: 'alice', name: 'Alice · Thesis Co-Pilot (Camber)' };
 
-    if (normalizedModel.includes('deepseek')) {
+    if (normalizedModel.includes('alice') || normalizedModel.includes('camber')) {
+        identity = { key: 'alice', name: 'Alice · Thesis Co-Pilot (Camber)' };
+    } else if (normalizedModel.includes('deepseek')) {
         identity = { key: 'deepseek', name: 'DeepSeek Reviewer' };
     } else if (normalizedModel.includes('qwen')) {
         identity = { key: 'qwen', name: 'Qwen Builder' };
@@ -41,6 +43,30 @@ const updateAiIdentity = (model = '') => {
     if (aiActiveIdentity) aiActiveIdentity.textContent = identity.name;
     aiAgents.forEach((agent) => agent.classList.toggle('is-active', agent.dataset.aiAgent === identity.key));
 };
+
+aiAgents.forEach((agent) => {
+    agent.addEventListener('click', () => {
+        const key = agent.dataset.aiAgent;
+        aiAgents.forEach((a) => a.classList.remove('is-active'));
+        agent.classList.add('is-active');
+        if (key === 'alice') {
+            if (aiActiveIdentity) aiActiveIdentity.textContent = 'Alice · Thesis Co-Pilot (Camber)';
+            if (aiLabModel) aiLabModel.textContent = 'Camber Cloud Custom Agent';
+        } else if (key === 'gemini') {
+            if (aiActiveIdentity) aiActiveIdentity.textContent = 'Google Gemini 2.5 Flash';
+            if (aiLabModel) aiLabModel.textContent = '1,000,000+ token context · Free tier';
+        } else if (key === 'llama') {
+            if (aiActiveIdentity) aiActiveIdentity.textContent = 'Llama 3.3 (Groq)';
+            if (aiLabModel) aiLabModel.textContent = 'Ultra-low latency LPU';
+        } else if (key === 'deepseek') {
+            if (aiActiveIdentity) aiActiveIdentity.textContent = 'DeepSeek-R1';
+            if (aiLabModel) aiLabModel.textContent = 'Deep academic reasoning';
+        } else if (key === 'qwen') {
+            if (aiActiveIdentity) aiActiveIdentity.textContent = 'Qwen 2.5';
+            if (aiLabModel) aiLabModel.textContent = 'Code & benchmarks';
+        }
+    });
+});
 
 updateAiIdentity();
 
@@ -513,6 +539,7 @@ const loadAiAvailability = async () => {
             }
         };
 
+        updateStatusBadge('#status-alice', providers.alice);
         updateStatusBadge('#status-gemini', providers.gemini);
         updateStatusBadge('#status-groq', providers.groq);
         updateStatusBadge('#status-ollama', providers.ollama);

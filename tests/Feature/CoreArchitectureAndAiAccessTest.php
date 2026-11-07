@@ -157,11 +157,13 @@ class CoreArchitectureAndAiAccessTest extends TestCase
             'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions' => Http::response(['choices' => []], 200),
             'https://api.groq.com/openai/v1/models' => Http::response(['data' => []], 200),
             'http://127.0.0.1:11434/api/tags' => Http::response(['models' => [['name' => 'llama3.2']]], 200),
+            'https://app.cambercloud.com*' => Http::response(['status' => 'ok'], 200),
         ]);
 
         $response = $this->actingAs($user)->getJson('/api/v1/ai/status');
 
         $response->assertOk()
+            ->assertJsonPath('data.providers.alice.status', 'ready')
             ->assertJsonPath('data.providers.gemini.status', 'ready')
             ->assertJsonPath('data.providers.groq.status', 'ready')
             ->assertJsonPath('data.providers.ollama.status', 'ready');
@@ -173,6 +175,7 @@ class CoreArchitectureAndAiAccessTest extends TestCase
             'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions' => Http::response(['choices' => []], 200),
             'https://api.groq.com/openai/v1/models' => Http::response(['data' => []], 200),
             'http://127.0.0.1:11434/api/tags' => Http::response(['models' => []], 200),
+            'https://app.cambercloud.com*' => Http::response(['status' => 'ok'], 200),
         ]);
 
         $this->artisan('ai:check')

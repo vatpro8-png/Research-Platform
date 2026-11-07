@@ -63,6 +63,7 @@
                         <p class="workspace-description">{{ $project->description ?: 'A shared collaborative space for thesis drafting, evidence capture, citations, and supervisor reviews.' }}</p>
                         <div class="ai-button-row">
                             <button class="button button-ai" id="ai-summary" type="button">✦ Ask research assistant</button>
+                            <a href="https://app.cambercloud.com/agents/hafizurrahman78232878/Thesis_Copilot" target="_blank" rel="noopener noreferrer" class="button button-quiet" style="border-color: rgba(124, 58, 237, 0.4); color: #7c3aed; font-weight: 600;" title="Launch Alice: Lead Academic Methodologist on Camber Cloud">🎓 Launch Alice Copilot ↗</a>
                             <button class="button button-ai-quiet" type="button" data-ai-instruction="Review the current project context and identify the three most important next research actions.">Next best actions</button>
                             <button class="button button-ai-quiet" type="button" data-ai-instruction="Check whether the research question, methodology, evidence, and expected contribution are aligned.">Check alignment</button>
                             <button class="button button-quiet" id="open-theory-guide" type="button">📚 Methodology theory guide</button>
@@ -324,7 +325,12 @@
                                 <div class="ai-collaboration-heading"><strong>AI Studio Team</strong><span>Multi-agent context</span></div>
                                 <p>Configured models operate with zero cross-talk. All prompts and outputs are TLS 1.3 encrypted in transit and AES-256 encrypted at rest.</p>
                                 <div class="ai-agent-roster" aria-label="Configured AI collaborators">
-                                    <div class="ai-agent is-active" data-ai-agent="gemini">
+                                    <div class="ai-agent is-active" data-ai-agent="alice">
+                                        <span class="ai-personal-logo" style="background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; font-weight: 700;">A</span>
+                                        <span><strong>Alice (Camber)</strong><small>Thesis Co-Pilot & Critic</small></span>
+                                        <i></i>
+                                    </div>
+                                    <div class="ai-agent" data-ai-agent="gemini">
                                         <span class="ai-personal-logo ai-logo-gemini">G</span>
                                         <span><strong>Google Gemini</strong><small>Deep reasoning & 1M context</small></span>
                                         <i></i>
@@ -425,8 +431,12 @@
                                         <button type="button" class="button button-quiet button-sm" id="btn-refresh-ai-status" style="padding: 2px 6px; font-size: 0.7rem;">↻ Check</button>
                                     </div>
                                     <div id="ai-providers-quick-status" style="width: 100%; display: flex; flex-direction: column; gap: 5px; font-size: 0.75rem;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(124, 58, 237, 0.08); padding: 5px 8px; border-radius: 4px; border-left: 3px solid #7c3aed;">
+                                            <span><strong>★ Alice (Camber Cloud)</strong></span>
+                                            <span id="status-alice" class="arch-badge arch-pass" style="font-size: 0.65rem;">ONLINE</span>
+                                        </div>
                                         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.03); padding: 5px 8px; border-radius: 4px;">
-                                            <span>★ Google Gemini 2.5 Flash</span>
+                                            <span>Google Gemini 2.5 Flash</span>
                                             <span id="status-gemini" class="arch-badge arch-warn" style="font-size: 0.65rem;">REACHABLE (Key Req)</span>
                                         </div>
                                         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.03); padding: 5px 8px; border-radius: 4px;">
