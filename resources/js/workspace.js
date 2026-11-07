@@ -1376,5 +1376,466 @@ document.querySelector('#citation-search')?.addEventListener('input', (e) => fil
 document.querySelector('#modal-citation-search')?.addEventListener('input', (e) => filterCitations(e.target.value));
 document.querySelector('#btn-refresh-ai-status')?.addEventListener('click', () => loadAiAvailability());
 
+// =========================================================================
+// MICROSOFT EXCEL RESEARCH METHODOLOGY & SECTION GOVERNANCE MATRIX
+// =========================================================================
+
+let excelMatrixData = [
+    {
+        row_id: 1,
+        section: '1. Introduction & Problem Space',
+        methodology: 'Problem Formulation & Value Proposition',
+        ai_recommendation: 'Articulate SMART research question. State real-world impact. Ground in >= 8 peer-reviewed foundational papers.',
+        author_rule: 'Focus on real-time co-authoring friction and supervisory review overhead.',
+        target_words: '1,200',
+        min_citations: 8,
+        status: 'AI Recommended'
+    },
+    {
+        row_id: 2,
+        section: '2. Theoretical Grounding & Literature Gap',
+        methodology: 'Knowledge Base Foundation (Hevner Guideline 2)',
+        ai_recommendation: 'Ground in peer-reviewed seminal works; map state-of-the-art tools and articulate verifiable research gap.',
+        author_rule: 'Cite seminal DSR guidelines (Hevner 2004, Gregor 2006) and collaborative editing systems.',
+        target_words: '2,000',
+        min_citations: 14,
+        status: 'AI Recommended'
+    },
+    {
+        row_id: 3,
+        section: '3. Artifact Architecture & Methodological Cycles',
+        methodology: 'Design as a Search Process (Hevner Guideline 6)',
+        ai_recommendation: 'Detail iterative build cycles, architectural blueprints, data models, and functional specifications.',
+        author_rule: 'Document multi-agent orchestration, WebSocket sync pipelines, and SQLite persistence engine.',
+        target_words: '2,500',
+        min_citations: 9,
+        status: 'AI Recommended'
+    },
+    {
+        row_id: 4,
+        section: '4. Implementation & Rigorous Artifact Evaluation',
+        methodology: 'Design Evaluation (Hevner Guideline 3)',
+        ai_recommendation: 'Evaluate artifact utility, throughput, and reliability through empirical benchmarks or user studies.',
+        author_rule: 'Conduct concurrent editing stress test (50 agents) and report latency percentiles.',
+        target_words: '2,200',
+        min_citations: 6,
+        status: 'AI Recommended'
+    },
+    {
+        row_id: 5,
+        section: '5. Discussion & Research Contributions',
+        methodology: 'Research Contributions (Hevner Guideline 4)',
+        ai_recommendation: 'Contrast artifact capabilities against existing literature; explain design principles and generalizable patterns.',
+        author_rule: 'Articulate clear architectural design principles for future multi-agent research tools.',
+        target_words: '1,800',
+        min_citations: 8,
+        status: 'AI Recommended'
+    },
+    {
+        row_id: 6,
+        section: '6. Limitations, Rigor Audit & Future Horizons',
+        methodology: 'Research Rigor & Communication (Hevner Guidelines 5 & 7)',
+        ai_recommendation: 'Address technical constraints, scalability bottlenecks, deployment limitations, and next research vectors.',
+        author_rule: 'Outline future work on distributed cloud federation and automated peer-review consensus.',
+        target_words: '1,000',
+        min_citations: 4,
+        status: 'AI Recommended'
+    }
+];
+
+let activeExcelCell = null;
+let activeExcelCellAddress = 'D1';
+
+const excelTbody = document.querySelector('#excel-tbody');
+const excelNameBox = document.querySelector('#excel-name-box');
+const excelFormulaInput = document.querySelector('#excel-formula-input');
+const excelStatSections = document.querySelector('#excel-stat-sections');
+const excelStatWords = document.querySelector('#excel-stat-words');
+const excelStatRules = document.querySelector('#excel-stat-rules');
+const excelStatusBar = document.querySelector('#excel-status-bar');
+const excelMatrixWrapper = document.querySelector('#excel-matrix-wrapper');
+const paperSheetViewport = document.querySelector('.paper-sheet-viewport');
+
+const renderExcelMatrixTable = () => {
+    if (!excelTbody) return;
+    excelTbody.innerHTML = '';
+
+    let totalWords = 0;
+    let customizedCount = 0;
+
+    excelMatrixData.forEach((row, index) => {
+        const rowNum = index + 1;
+        const wordsNum = parseInt(String(row.target_words).replace(/[^0-9]/g, '')) || 0;
+        totalWords += wordsNum;
+        if (row.status?.includes('Customized') || row.status?.includes('Author')) {
+            customizedCount++;
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'excel-tr';
+        tr.dataset.rowId = row.row_id || rowNum;
+        tr.dataset.rowIndex = index;
+
+        const isAuthorCustom = (row.status || '').includes('Customized') || (row.status || '').includes('Author');
+        const statusClass = isAuthorCustom ? 'status-custom' : ((row.status || '').includes('Applied') ? 'status-applied' : 'status-ai');
+
+        tr.innerHTML = `
+            <td class="excel-td-row-num">${rowNum}</td>
+            <td class="excel-td-cell" contenteditable="true" spellcheck="false" data-col="A" data-field="section">${escapeHtml(row.section || '')}</td>
+            <td class="excel-td-cell" contenteditable="true" spellcheck="false" data-col="B" data-field="methodology">${escapeHtml(row.methodology || '')}</td>
+            <td class="excel-td-cell" contenteditable="true" spellcheck="false" data-col="C" data-field="ai_recommendation">${escapeHtml(row.ai_recommendation || '')}</td>
+            <td class="excel-td-cell excel-td-author-rule ${isAuthorCustom ? 'is-customized' : ''}" contenteditable="true" spellcheck="false" data-col="D" data-field="author_rule">${escapeHtml(row.author_rule || '')}</td>
+            <td class="excel-td-cell" contenteditable="true" spellcheck="false" data-col="E" data-field="target_words" style="text-align: right;">${escapeHtml(String(row.target_words || ''))}</td>
+            <td class="excel-td-cell" contenteditable="true" spellcheck="false" data-col="F" data-field="min_citations" style="text-align: right;">${escapeHtml(String(row.min_citations || ''))}</td>
+            <td class="excel-td-cell" data-col="G" style="text-align: center;"><span class="cell-status-badge ${statusClass}">${escapeHtml(row.status || 'AI Recommended')}</span></td>
+            <td class="excel-td-cell" data-col="H" style="text-align: center;"><button type="button" class="excel-cell-del-btn" title="Delete section row">✕</button></td>
+        `;
+
+        // Wire cell click / focus / input listeners
+        tr.querySelectorAll('.excel-td-cell[contenteditable]').forEach((cell) => {
+            cell.addEventListener('focus', () => selectExcelCell(cell, index));
+            cell.addEventListener('click', () => selectExcelCell(cell, index));
+
+            cell.addEventListener('input', () => {
+                const field = cell.dataset.field;
+                const value = cell.innerText.trim();
+                row[field] = value;
+
+                // When user edits Author Rule in Column D, mark as Customized by Author
+                if (field === 'author_rule') {
+                    row.status = 'Customized by Author';
+                    cell.classList.add('is-customized');
+                    const badge = tr.querySelector('.cell-status-badge');
+                    if (badge) {
+                        badge.className = 'cell-status-badge status-custom';
+                        badge.textContent = 'Customized by Author';
+                    }
+                }
+
+                if (excelFormulaInput && activeExcelCell === cell) {
+                    excelFormulaInput.value = cell.innerText;
+                }
+                updateExcelStats();
+            });
+        });
+
+        // Delete Row Button
+        tr.querySelector('.excel-cell-del-btn')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (confirm(`Remove section row "${row.section}"?`)) {
+                excelMatrixData.splice(index, 1);
+                renderExcelMatrixTable();
+            }
+        });
+
+        excelTbody.appendChild(tr);
+    });
+
+    updateExcelStats();
+};
+
+const selectExcelCell = (cell, rowIndex) => {
+    if (activeExcelCell) {
+        activeExcelCell.classList.remove('is-selected');
+    }
+    activeExcelCell = cell;
+    cell.classList.add('is-selected');
+
+    const colLetter = cell.dataset.col || 'A';
+    const rowNum = rowIndex + 1;
+    activeExcelCellAddress = `${colLetter}${rowNum}`;
+
+    if (excelNameBox) {
+        excelNameBox.textContent = activeExcelCellAddress;
+    }
+    if (excelFormulaInput) {
+        excelFormulaInput.value = cell.innerText;
+    }
+};
+
+const updateExcelStats = () => {
+    let totalWords = 0;
+    let customRules = 0;
+    excelMatrixData.forEach((r) => {
+        totalWords += parseInt(String(r.target_words).replace(/[^0-9]/g, '')) || 0;
+        if ((r.status || '').includes('Customized') || (r.status || '').includes('Author')) {
+            customRules++;
+        }
+    });
+
+    if (excelStatSections) excelStatSections.textContent = `${excelMatrixData.length} Sections`;
+    if (excelStatWords) excelStatWords.textContent = `Sum Words: ${totalWords.toLocaleString()}`;
+    if (excelStatRules) {
+        excelStatRules.textContent = customRules > 0
+            ? `Rules: ${customRules} Custom / ${excelMatrixData.length} Total (Author Customized)`
+            : `Rules: ${excelMatrixData.length} Active (Click any cell in Column D to change)`;
+    }
+};
+
+// Two-way synchronization from Formula Input to Active Cell
+excelFormulaInput?.addEventListener('input', () => {
+    if (!activeExcelCell) return;
+    const val = excelFormulaInput.value;
+    activeExcelCell.innerText = val;
+
+    const tr = activeExcelCell.closest('tr');
+    const rowIndex = parseInt(tr?.dataset.rowIndex || '0');
+    const field = activeExcelCell.dataset.field;
+    if (excelMatrixData[rowIndex] && field) {
+        excelMatrixData[rowIndex][field] = val;
+        if (field === 'author_rule') {
+            excelMatrixData[rowIndex].status = 'Customized by Author';
+            activeExcelCell.classList.add('is-customized');
+            const badge = tr.querySelector('.cell-status-badge');
+            if (badge) {
+                badge.className = 'cell-status-badge status-custom';
+                badge.textContent = 'Customized by Author';
+            }
+        }
+    }
+    updateExcelStats();
+});
+
+// View Switcher (Split, Excel Matrix Only, Canvas Only)
+document.querySelectorAll('.view-switch-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.view-switch-btn').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+
+        const mode = btn.dataset.viewMode;
+        if (mode === 'excel') {
+            if (excelMatrixWrapper) excelMatrixWrapper.style.display = 'block';
+            if (paperSheetViewport) paperSheetViewport.style.display = 'none';
+        } else if (mode === 'canvas') {
+            if (excelMatrixWrapper) excelMatrixWrapper.style.display = 'none';
+            if (paperSheetViewport) paperSheetViewport.style.display = 'block';
+        } else {
+            // Split View
+            if (excelMatrixWrapper) excelMatrixWrapper.style.display = 'block';
+            if (paperSheetViewport) paperSheetViewport.style.display = 'block';
+        }
+    });
+});
+
+// Toolbar jump to Excel
+document.querySelector('#btn-open-excel-matrix')?.addEventListener('click', () => {
+    if (excelMatrixWrapper) {
+        excelMatrixWrapper.style.display = 'block';
+        excelMatrixWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Set split view active
+        document.querySelectorAll('.view-switch-btn').forEach((b) => {
+            b.classList.toggle('is-active', b.dataset.viewMode === 'split');
+        });
+    }
+});
+
+// Collapse / Minimize Excel Matrix
+document.querySelector('#btn-excel-toggle-collapse')?.addEventListener('click', (e) => {
+    excelMatrixWrapper?.classList.toggle('is-collapsed');
+    e.target.textContent = excelMatrixWrapper?.classList.contains('is-collapsed') ? '+' : '−';
+});
+
+// Ask Alice (AI Agent Recommendation)
+document.querySelector('#btn-excel-ai-recommend')?.addEventListener('click', async () => {
+    const btn = document.querySelector('#btn-excel-ai-recommend');
+    if (!btn) return;
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="btn-icon">⏳</span><span class="btn-text"><strong>Alice is analyzing...</strong><small>Generating methodology matrix</small></span>`;
+
+    if (excelStatusBar) {
+        excelStatusBar.innerHTML = `<span style="color: #0284c7; font-weight: 700;">🤖 Alice AI Copilot is synthesizing academic methodology and section rules...</span>`;
+    }
+
+    try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const response = await fetch(`/api/v1/projects/${projectId}/ai/methodology-matrix`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken || '',
+            },
+            body: JSON.stringify({
+                methodology_preference: methodologySelect?.value || '',
+            }),
+        });
+
+        const data = await response.json();
+        if (response.ok && data?.data?.matrix) {
+            excelMatrixData = data.data.matrix.map((r, i) => ({
+                row_id: r.row_id || i + 1,
+                section: r.section || `Section ${i + 1}`,
+                methodology: r.methodology || 'Scientific Inquiry',
+                ai_recommendation: r.ai_recommendation || 'Grounded in peer-reviewed methodology.',
+                author_rule: r.author_rule || 'Author custom constraint.',
+                target_words: r.target_words || '1,500',
+                min_citations: r.min_citations || 8,
+                status: 'AI Recommended',
+            }));
+
+            renderExcelMatrixTable();
+
+            if (runningMethodology && data.data.overall_methodology) {
+                runningMethodology.textContent = `· ${data.data.overall_methodology}`;
+            }
+
+            if (saveState) {
+                saveState.textContent = 'Alice AI methodology recommendations applied to Excel matrix';
+            }
+        } else {
+            alert('Could not retrieve AI methodology recommendation. Using standard framework.');
+        }
+    } catch (err) {
+        console.error('Error fetching AI methodology matrix:', err);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        updateExcelStats();
+    }
+});
+
+// Apply Matrix to Manuscript Canvas
+document.querySelector('#btn-excel-apply-canvas')?.addEventListener('click', () => {
+    if (!editor) return;
+
+    if (!confirm('Apply these sections and author rules to your manuscript canvas? This will structure your outline.')) {
+        return;
+    }
+
+    let manuscriptHtml = '';
+    excelMatrixData.forEach((row) => {
+        manuscriptHtml += `<h2>${escapeHtml(row.section)}</h2>\n`;
+        manuscriptHtml += `<div class="manuscript-section-rule" contenteditable="false">\n`;
+        manuscriptHtml += `    <span class="rule-badge-author">Author Rule</span> <strong>${escapeHtml(row.author_rule || 'Follow research plan')}</strong>\n`;
+        manuscriptHtml += `    <br><span class="rule-badge-ai">Alice AI Guideline</span> <small>${escapeHtml(row.ai_recommendation || '')}</small>\n`;
+        manuscriptHtml += `    <div style="margin-top: 5px; font-family: monospace; font-size: 10px; color: #166534;">\n`;
+        manuscriptHtml += `        Methodology: ${escapeHtml(row.methodology)} · Target: ${escapeHtml(String(row.target_words))} words · Min Citations: ${escapeHtml(String(row.min_citations))}\n`;
+        manuscriptHtml += `    </div>\n`;
+        manuscriptHtml += `</div>\n`;
+        manuscriptHtml += `<p>Document your inquiry and empirical evidence for ${escapeHtml(row.section)} here...</p>\n\n`;
+
+        row.status = 'Applied to Paper';
+    });
+
+    editor.innerHTML = manuscriptHtml;
+    renderExcelMatrixTable();
+    updateManuscriptStats();
+
+    // Ensure paper viewport is visible
+    if (paperSheetViewport) {
+        paperSheetViewport.style.display = 'block';
+    }
+
+    if (saveState) {
+        saveState.textContent = `Applied ${excelMatrixData.length} sections & customized author rules to manuscript`;
+    }
+});
+
+// Insert Table into Paper
+document.querySelector('#btn-excel-insert-table')?.addEventListener('click', () => {
+    if (!editor) return;
+
+    let tableHtml = `\n<table class="paper-methodology-table" contenteditable="false">\n`;
+    tableHtml += `    <caption><strong>Table 1:</strong> Research Methodology and Section Governance Matrix (Author-Defined Rules & AI Recommendations)</caption>\n`;
+    tableHtml += `    <thead>\n`;
+    tableHtml += `        <tr>\n`;
+    tableHtml += `            <th>Section / Chapter</th>\n`;
+    tableHtml += `            <th>Methodology Paradigm</th>\n`;
+    tableHtml += `            <th>Author Governance Rule</th>\n`;
+    tableHtml += `            <th>AI Rigor Guideline (Alice)</th>\n`;
+    tableHtml += `            <th style="text-align: right;">Target Words</th>\n`;
+    tableHtml += `            <th style="text-align: right;">Cites</th>\n`;
+    tableHtml += `        </tr>\n`;
+    tableHtml += `    </thead>\n`;
+    tableHtml += `    <tbody>\n`;
+
+    excelMatrixData.forEach((row) => {
+        tableHtml += `        <tr>\n`;
+        tableHtml += `            <td><strong>${escapeHtml(row.section)}</strong></td>\n`;
+        tableHtml += `            <td>${escapeHtml(row.methodology)}</td>\n`;
+        tableHtml += `            <td>${escapeHtml(row.author_rule)}</td>\n`;
+        tableHtml += `            <td><small>${escapeHtml(row.ai_recommendation)}</small></td>\n`;
+        tableHtml += `            <td style="text-align: right;">${escapeHtml(String(row.target_words))}</td>\n`;
+        tableHtml += `            <td style="text-align: right;">${escapeHtml(String(row.min_citations))}</td>\n`;
+        tableHtml += `        </tr>\n`;
+    });
+
+    tableHtml += `    </tbody>\n`;
+    tableHtml += `    <tfoot>\n`;
+    tableHtml += `        <tr>\n`;
+    tableHtml += `            <td colspan="6"><em>Note: Methodologies recommended by Alice AI Copilot; governance rules and empirical thresholds verified and customized by study author.</em></td>\n`;
+    tableHtml += `        </tr>\n`;
+    tableHtml += `    </tfoot>\n`;
+    tableHtml += `</table>\n<p></p>\n`;
+
+    editor.innerHTML += tableHtml;
+    updateManuscriptStats();
+
+    if (saveState) {
+        saveState.textContent = 'Embedded Table 1 (Methodology Matrix) into manuscript canvas';
+    }
+});
+
+// Add Section Row
+document.querySelector('#btn-excel-add-row')?.addEventListener('click', () => {
+    const nextId = excelMatrixData.length + 1;
+    excelMatrixData.push({
+        row_id: nextId,
+        section: `${nextId}. New Custom Section`,
+        methodology: 'Empirical Verification',
+        ai_recommendation: 'Specify clear hypotheses, measurement variables, and validity controls.',
+        author_rule: 'Author defined constraint for this section.',
+        target_words: '1,500',
+        min_citations: 6,
+        status: 'Customized by Author',
+    });
+    renderExcelMatrixTable();
+});
+
+// Delete Selected Row
+document.querySelector('#btn-excel-delete-row')?.addEventListener('click', () => {
+    if (!activeExcelCell) {
+        alert('Please click on a row to select it first.');
+        return;
+    }
+    const tr = activeExcelCell.closest('tr');
+    const rowIndex = parseInt(tr?.dataset.rowIndex || '0');
+    if (confirm(`Delete row ${rowIndex + 1}?`)) {
+        excelMatrixData.splice(rowIndex, 1);
+        activeExcelCell = null;
+        renderExcelMatrixTable();
+    }
+});
+
+// Reset Standard Outline
+document.querySelector('#btn-excel-reset')?.addEventListener('click', () => {
+    if (confirm('Reset matrix to standard Design Science / IMRaD research outline?')) {
+        location.reload();
+    }
+});
+
+// Export CSV
+document.querySelector('#btn-excel-export')?.addEventListener('click', () => {
+    let csv = 'Section,Methodology,AI_Recommendation,Author_Rule,Target_Words,Citations,Status\n';
+    excelMatrixData.forEach((row) => {
+        const clean = (str) => `"${String(str || '').replace(/"/g, '""')}"`;
+        csv += `${clean(row.section)},${clean(row.methodology)},${clean(row.ai_recommendation)},${clean(row.author_rule)},${clean(row.target_words)},${clean(row.min_citations)},${clean(row.status)}\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Co-Auth_Methodology_Matrix.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+});
+
+// Initialize Excel Matrix on page load
+renderExcelMatrixTable();
+
 // Initial Load
 loadWorkspace();
