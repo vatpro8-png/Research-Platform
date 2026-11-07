@@ -192,6 +192,9 @@
                                 <button type="button" class="toolbar-chip-btn" id="btn-open-templates" title="Choose a ready-to-use research paper template">
                                     <span class="icon">📄</span> Templates
                                 </button>
+                                <button type="button" class="toolbar-chip-btn toolbar-chip-excel" id="btn-open-excel-matrix" title="Open Microsoft Excel Methodology & Section Matrix">
+                                    <span class="icon" style="color: #107c41;">📊</span> Excel Matrix
+                                </button>
                                 <button type="button" class="toolbar-chip-btn" id="btn-open-media" title="Insert figures, diagrams, or media">
                                     <span class="icon">🖼</span> Insert Figure
                                 </button>

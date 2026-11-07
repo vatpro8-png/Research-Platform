@@ -10,4 +10,7 @@ Mirrored from Camber Cloud:
 - **Claude Code / Antigravity Skill**: [`.claude/skills/thesis-copilot/SKILL.md`](file:///c:/Users/Lenovo/research-platform/.claude/skills/thesis-copilot/SKILL.md)
 - **Platform Gateway**: [`app/Services/AiGateway.php`](file:///c:/Users/Lenovo/research-platform/app/Services/AiGateway.php)
 - **Frontend Workspace**: [`resources/views/project-workspace.blade.php`](file:///c:/Users/Lenovo/research-platform/resources/views/project-workspace.blade.php)
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6d1cf63c086768abb26c8f7b9700d4779945307b

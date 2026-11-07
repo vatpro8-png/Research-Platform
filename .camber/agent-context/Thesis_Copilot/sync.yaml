@@ -7,4 +7,7 @@ integrate:
 node_tier: "cpu-micro"
 last_synced_at: "2026-11-08T03:45:00Z"
 status: "active"
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6d1cf63c086768abb26c8f7b9700d4779945307b
