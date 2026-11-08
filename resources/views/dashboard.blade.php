@@ -5,12 +5,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>Co-Auth Research Studio</title>
+        @include('partials.favicons')
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="live-tech-ui">
         <div class="app-shell">
             <aside class="sidebar">
-                <a class="brand" href="{{ route('dashboard') }}"><span class="brand-mark">C</span><span><strong>Co-Auth</strong><small>research studio</small></span></a>
+                <a class="brand" href="{{ route('dashboard') }}"><span class="brand-mark"><img src="{{ asset('images/logo.png') }}" alt="Co-Auth Logo" class="brand-logo-img"></span><span><strong>Co-Auth</strong><small>research studio</small></span></a>
                 @include('partials.navigation')
                 <div class="sidebar-foot">
                     <div class="status-dot"><span></span>Workspace online</div>

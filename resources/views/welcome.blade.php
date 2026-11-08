@@ -6,6 +6,7 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
+        @include('partials.favicons')
         @fonts
 
         <!-- Styles / Scripts -->
@@ -18,7 +19,11 @@
         @endif
     </head>
     <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
-        <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-6 not-has-[nav]:hidden">
+        <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-6 flex items-center justify-between not-has-[nav]:hidden">
+            <a href="{{ url('/') }}" class="inline-flex items-center gap-3 text-inherit no-underline font-semibold">
+                <img src="{{ asset('images/logo.png') }}" alt="Co-Auth Logo" class="w-9 h-9 rounded-lg object-contain shadow-sm">
+                <span>Co-Auth <span class="text-xs font-normal opacity-70 block">Research Studio</span></span>
+            </a>
             @if (Route::has('login'))
                 <nav class="flex items-center justify-end gap-4">
                     @auth

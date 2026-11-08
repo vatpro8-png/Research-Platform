@@ -20,7 +20,7 @@ button, input, textarea { font: inherit; }
 .app-shell { display: flex; min-height: 100vh; }
 .sidebar { width: 250px; flex: none; border-right: 1px solid var(--line); background: #f2f6f3; padding: 30px 20px 25px; display: flex; flex-direction: column; }
 .brand { display: flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; font-size: 15px; letter-spacing: -.02em; }
-.brand strong, .brand small { display: block; }.brand small { color: var(--muted); font: 11px 'DM Mono', monospace; margin-top: 2px; }.brand-mark { width: 34px; height: 34px; border-radius: 10px 10px 10px 2px; background: var(--teal); color: white; display: grid; place-items: center; font-weight: 800; }
+.brand strong, .brand small { display: block; }.brand small { color: var(--muted); font: 11px 'DM Mono', monospace; margin-top: 2px; }.brand-mark { width: 36px; height: 36px; border-radius: 9px; background: transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }.brand-mark .brand-logo-img, .brand-logo-img { width: 36px; height: 36px; object-fit: contain; border-radius: 9px; display: block; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); transition: transform .2s ease, box-shadow .2s ease; }.brand:hover .brand-logo-img { transform: scale(1.05); box-shadow: 0 4px 14px rgba(0, 168, 168, 0.35); }
 .primary-nav { margin-top: 68px; display: grid; gap: 7px; }.nav-item { color: var(--muted); text-decoration: none; padding: 12px 13px; border-radius: 7px; font-size: 13px; display: flex; gap: 12px; align-items: center; }.nav-item span { font-size: 18px; width: 18px; }.nav-item.is-active, .nav-item:hover { color: var(--teal-dark); background: #dcecea; font-weight: 700; }
 .sidebar-foot { margin-top: auto; padding: 16px 12px; border-top: 1px solid var(--line); }.sidebar-foot p { color: var(--muted); font-size: 11px; line-height: 1.6; margin: 13px 0 0; }.status-dot { font: 10px 'DM Mono', monospace; color: var(--teal-dark); text-transform: uppercase; letter-spacing: .05em; }.status-dot span, .live-label i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #36b381; margin-right: 7px; }
 .main-content { max-width: 1320px; width: 100%; margin: 0 auto; padding: 0 54px 70px; }.topbar { height: 84px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }.breadcrumbs { color: var(--muted); font-size: 12px; }.breadcrumbs b { margin: 0 9px; color: #b8c6c4; }.breadcrumbs strong { color: var(--ink); }.profile-chip { display: flex; align-items: center; gap: 9px; font-size: 12px; }.profile-chip strong, .profile-chip small { display: block; }.profile-chip small { color: var(--muted); font-size: 10px; margin-top: 2px; }.chevron { color: var(--muted); margin-left: 7px; }.avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font: 10px 'DM Mono', monospace; }.avatar-teal, .activity-icon.teal { background: #c9e3de; color: #0c6968; }
@@ -607,10 +607,9 @@ body.layout-review .workspace-grid { grid-template-columns: 1.1fr 0.9fr; }
 }
 
 .live-tech-ui .brand-mark {
-    border-radius: 3px;
-    color: #0b0f0e;
-    background: var(--teal);
-    box-shadow: 0 0 24px rgb(118 185 0 / 35%);
+    border-radius: 9px;
+    background: transparent;
+    box-shadow: none;
 }
 
 .live-tech-ui .brand small,

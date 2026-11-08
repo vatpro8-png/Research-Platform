@@ -5,13 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>{{ $project->title }} · Research Studio · Co-Auth</title>
+        @include('partials.favicons')
         @vite(['resources/css/app.css', 'resources/js/workspace.js'])
     </head>
     <body data-project-id="{{ $project->id }}" class="live-tech-ui layout-full theme-clean-white font-serif margin-normal spacing-1-5 layout-single-col">
         <div class="workspace-shell">
             <header class="workspace-topbar">
                 <a class="brand" href="{{ route('dashboard') }}">
-                    <span class="brand-mark">C</span>
+                    <span class="brand-mark"><img src="{{ asset('images/logo.png') }}" alt="Co-Auth Logo" class="brand-logo-img"></span>
                     <span><strong>Co-Auth</strong><small>research studio</small></span>
                 </a>
                 <div class="workspace-crumb">
