@@ -674,6 +674,10 @@
                                         <button type="button" class="button button-quiet button-sm" id="btn-refresh-ai-status" style="padding: 2px 6px; font-size: 0.7rem;">↻ Check</button>
                                     </div>
                                     <div id="ai-providers-quick-status" style="width: 100%; display: flex; flex-direction: column; gap: 5px; font-size: 0.75rem;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(59, 130, 246, 0.08); padding: 5px 8px; border-radius: 4px; border-left: 3px solid #3b82f6;">
+                                            <span><strong>✦ OpenRouter (Unified Gateway)</strong></span>
+                                            <span id="status-openrouter" class="arch-badge arch-pass" style="font-size: 0.65rem;">ONLINE</span>
+                                        </div>
                                         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(124, 58, 237, 0.08); padding: 5px 8px; border-radius: 4px; border-left: 3px solid #7c3aed;">
                                             <span><strong>★ Alice (Camber Cloud)</strong></span>
                                             <span id="status-alice" class="arch-badge arch-pass" style="font-size: 0.65rem;">ONLINE</span>

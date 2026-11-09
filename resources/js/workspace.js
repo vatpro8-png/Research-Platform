@@ -587,6 +587,7 @@ const loadAiAvailability = async () => {
             }
         };
 
+        updateStatusBadge('#status-openrouter', providers.openrouter);
         updateStatusBadge('#status-alice', providers.alice);
         updateStatusBadge('#status-gemini', providers.gemini);
         updateStatusBadge('#status-groq', providers.groq);
