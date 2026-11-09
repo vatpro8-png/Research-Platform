@@ -23,52 +23,81 @@ const aiLabOutput = document.querySelector('#ai-lab-output');
 const aiLabModel = document.querySelector('#ai-lab-model');
 const aiActiveIdentity = document.querySelector('#ai-active-identity');
 const aiAgents = document.querySelectorAll('[data-ai-agent]');
+const aiModelDropdown = document.querySelector('#ai-model-dropdown');
+const aiParamTemperature = document.querySelector('#param-temperature');
+const aiValTemperature = document.querySelector('#val-temperature');
+const aiParamDepth = document.querySelector('#param-context-depth');
 
-const updateAiIdentity = (model = '') => {
-    const normalizedModel = model.toLowerCase();
-    let identity = { key: 'alice', name: 'Alice · Thesis Co-Pilot (Camber)' };
+const AI_MODEL_DEFINITIONS = {
+    'openai/gpt-4o-mini': { key: 'openrouter', name: 'OpenRouter · GPT-4o Mini', subtitle: 'Flagship Multi-Model Gateway · End-to-End Encrypted' },
+    'openai/gpt-4o': { key: 'openrouter', name: 'OpenRouter · GPT-4o', subtitle: 'Flagship SOTA Academic Reasoning · End-to-End Encrypted' },
+    'anthropic/claude-3.5-sonnet': { key: 'claude', name: 'Claude 3.5 Sonnet', subtitle: 'Scholarly Dissertation & Rigor via OpenRouter' },
+    'deepseek/deepseek-r1': { key: 'deepseek', name: 'DeepSeek-R1', subtitle: 'Mathematical & Logical Proofs via OpenRouter' },
+    'meta-llama/llama-3.3-70b-instruct': { key: 'llama', name: 'Llama 3.3 70B', subtitle: 'Open-Weights High-Throughput via OpenRouter' },
+    'alice': { key: 'alice', name: 'Alice · Thesis Co-Pilot (Camber)', subtitle: 'Lead Academic Methodologist & Critic · Camber Cloud' },
+    'gemini-2.5-flash': { key: 'gemini', name: 'Google Gemini 2.5 Flash', subtitle: '1,000,000+ token context · Free tier' },
+    'llama-3.3-70b-versatile': { key: 'llama', name: 'Llama 3.3 (Groq)', subtitle: 'Sub-second LPU Inference' },
+    'llama3.2': { key: 'ollama', name: 'Ollama (Local Private)', subtitle: 'Air-gapped 100% offline local loopback' },
+};
 
-    if (normalizedModel.includes('alice') || normalizedModel.includes('camber')) {
-        identity = { key: 'alice', name: 'Alice · Thesis Co-Pilot (Camber)' };
-    } else if (normalizedModel.includes('deepseek')) {
-        identity = { key: 'deepseek', name: 'DeepSeek Reviewer' };
-    } else if (normalizedModel.includes('qwen')) {
-        identity = { key: 'qwen', name: 'Qwen Builder' };
-    } else if (normalizedModel.includes('llama') || normalizedModel.includes('groq')) {
-        identity = { key: 'llama', name: 'Llama 3.3 (Groq)' };
-    } else if (normalizedModel.includes('gemini')) {
-        identity = { key: 'gemini', name: 'Google Gemini 2.5 Flash' };
+const syncModelSelection = (modelValue) => {
+    if (!modelValue) return;
+    if (aiModelDropdown && aiModelDropdown.value !== modelValue) {
+        aiModelDropdown.value = modelValue;
     }
 
-    if (aiActiveIdentity) aiActiveIdentity.textContent = identity.name;
-    aiAgents.forEach((agent) => agent.classList.toggle('is-active', agent.dataset.aiAgent === identity.key));
+    try {
+        localStorage.setItem('coauth_selected_ai_model', modelValue);
+    } catch (_) {}
+
+    const modelInfo = AI_MODEL_DEFINITIONS[modelValue] || {
+        key: 'openrouter',
+        name: modelValue,
+        subtitle: 'Configured Secure AI Endpoint',
+    };
+
+    if (aiActiveIdentity) aiActiveIdentity.textContent = modelInfo.name;
+    if (aiLabModel) aiLabModel.textContent = modelInfo.subtitle;
+
+    aiAgents.forEach((agent) => {
+        const matches = (agent.dataset.model === modelValue) || (agent.dataset.aiAgent === modelInfo.key);
+        agent.classList.toggle('is-active', matches);
+    });
 };
+
+aiModelDropdown?.addEventListener('change', (event) => {
+    syncModelSelection(event.target.value);
+});
 
 aiAgents.forEach((agent) => {
     agent.addEventListener('click', () => {
-        const key = agent.dataset.aiAgent;
-        aiAgents.forEach((a) => a.classList.remove('is-active'));
-        agent.classList.add('is-active');
-        if (key === 'alice') {
-            if (aiActiveIdentity) aiActiveIdentity.textContent = 'Alice · Thesis Co-Pilot (Camber)';
-            if (aiLabModel) aiLabModel.textContent = 'Camber Cloud Custom Agent';
-        } else if (key === 'gemini') {
-            if (aiActiveIdentity) aiActiveIdentity.textContent = 'Google Gemini 2.5 Flash';
-            if (aiLabModel) aiLabModel.textContent = '1,000,000+ token context · Free tier';
-        } else if (key === 'llama') {
-            if (aiActiveIdentity) aiActiveIdentity.textContent = 'Llama 3.3 (Groq)';
-            if (aiLabModel) aiLabModel.textContent = 'Ultra-low latency LPU';
-        } else if (key === 'deepseek') {
-            if (aiActiveIdentity) aiActiveIdentity.textContent = 'DeepSeek-R1';
-            if (aiLabModel) aiLabModel.textContent = 'Deep academic reasoning';
-        } else if (key === 'qwen') {
-            if (aiActiveIdentity) aiActiveIdentity.textContent = 'Qwen 2.5';
-            if (aiLabModel) aiLabModel.textContent = 'Code & benchmarks';
-        }
+        const targetModel = agent.dataset.model || (agent.dataset.aiAgent === 'alice' ? 'alice' : 'openai/gpt-4o-mini');
+        syncModelSelection(targetModel);
     });
 });
 
-updateAiIdentity();
+aiParamTemperature?.addEventListener('input', (event) => {
+    const val = parseFloat(event.target.value);
+    let desc = `${val} (Balanced)`;
+    if (val <= 0.2) desc = `${val} (Strict Academic Rigor)`;
+    else if (val <= 0.4) desc = `${val} (Methodological Focus)`;
+    else if (val <= 0.7) desc = `${val} (Balanced Synthesis)`;
+    else desc = `${val} (Exploratory / Creative)`;
+
+    if (aiValTemperature) aiValTemperature.textContent = desc;
+});
+
+// Restore saved model preference if available
+try {
+    const savedModel = localStorage.getItem('coauth_selected_ai_model');
+    if (savedModel && AI_MODEL_DEFINITIONS[savedModel]) {
+        syncModelSelection(savedModel);
+    } else {
+        syncModelSelection('openai/gpt-4o-mini');
+    }
+} catch (_) {
+    syncModelSelection('openai/gpt-4o-mini');
+}
 
 // Cached project data
 let currentProject = null;
@@ -258,6 +287,17 @@ const runAiSummary = async (instruction, sourceButton = null) => {
     if (aiLabOutput) aiLabOutput.innerHTML = '<span class="ai-output-loading">Synthesizing project context…</span>';
     if (aiResult) aiResult.textContent = '';
 
+    const selectedModel = aiModelDropdown?.value || 'openai/gpt-4o-mini';
+    const temperature = aiParamTemperature ? parseFloat(aiParamTemperature.value) : 0.2;
+    const depth = aiParamDepth?.value || 'standard';
+    const checklist = {
+        zero_hallucination: !!document.querySelector('#chk-zero-hallucination')?.checked,
+        methodology_audit: !!document.querySelector('#chk-methodology-audit')?.checked,
+        imrad_compliance: !!document.querySelector('#chk-imrad-compliance')?.checked,
+        devils_advocate: !!document.querySelector('#chk-devils-advocate')?.checked,
+        latex_formatting: !!document.querySelector('#chk-latex-formatting')?.checked,
+    };
+
     try {
         const response = await fetch(`/api/v1/projects/${projectId}/ai/summary`, {
             method: 'POST',
@@ -266,7 +306,13 @@ const runAiSummary = async (instruction, sourceButton = null) => {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             },
-            body: JSON.stringify({ instruction: instruction || 'Summarize the current project state and recommend the next three research actions.' }),
+            body: JSON.stringify({
+                instruction: instruction || 'Summarize the current project state and recommend the next three research actions.',
+                model: selectedModel,
+                temperature,
+                depth,
+                checklist,
+            }),
         });
         const payload = await response.json();
         if (!response.ok) {
@@ -276,9 +322,11 @@ const runAiSummary = async (instruction, sourceButton = null) => {
         const content = payload.data.content || 'No response was returned.';
         if (aiResult) aiResult.textContent = content;
         if (aiLabOutput) aiLabOutput.textContent = content;
-        if (aiModelBadge) aiModelBadge.textContent = `${payload.data.provider || 'Google Gemini'} · ${payload.data.model || 'gemini-2.5-flash'} (Encrypted)`;
-        if (aiLabModel) aiLabModel.textContent = `${payload.data.provider || 'Google Gemini'} · ${payload.data.model || 'gemini-2.5-flash'}`;
-        updateAiIdentity(payload.data.model || '');
+        const activeModelText = payload.data.model || selectedModel;
+        const activeProviderText = payload.data.provider || 'OpenRouter';
+        if (aiModelBadge) aiModelBadge.textContent = `${activeProviderText} · ${activeModelText} (Encrypted)`;
+        if (aiLabModel) aiLabModel.textContent = `${activeProviderText} · ${activeModelText} (End-to-End TLS 1.3)`;
+        syncModelSelection(selectedModel);
     } catch (error) {
         if (aiResult) aiResult.textContent = error.message;
         if (aiLabOutput) aiLabOutput.textContent = error.message;

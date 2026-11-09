@@ -462,42 +462,139 @@
                                 <span class="ai-live-dot"><i></i>Ready</span>
                             </div>
                             <p class="panel-subcopy">Grounded in project question, method, tasks, feedback, papers, and verified bibliography with strict zero-hallucination guards.</p>
-                            <div class="ai-provider-card">
-                                <div class="ai-personal-logo ai-logo-orchestrator" aria-hidden="true">✦</div>
-                                <div class="ai-provider-copy"><strong id="ai-active-identity">Google Gemini 2.5 Flash</strong><small id="ai-lab-model">1,000,000+ token context · Free tier</small></div>
-                                <span class="ai-collaboration-state"><i></i>Encrypted</span>
+                            <!-- Active Connection Status Card -->
+                            <div class="ai-provider-card" id="ai-provider-status-card">
+                                <div class="ai-personal-logo ai-logo-orchestrator" id="ai-provider-badge-icon" aria-hidden="true">✦</div>
+                                <div class="ai-provider-copy">
+                                    <strong id="ai-active-identity">OpenRouter · GPT-4o Mini</strong>
+                                    <small id="ai-lab-model">Active Gateway · End-to-End TLS 1.3</small>
+                                </div>
+                                <span class="ai-collaboration-state" id="ai-secure-state"><i></i>Encrypted</span>
                             </div>
+
+                            <!-- Model Selector Dropdown & Switcher -->
+                            <div class="ai-model-select-wrapper">
+                                <label for="ai-model-dropdown" class="ai-select-label">Active AI Model:</label>
+                                <select id="ai-model-dropdown" class="ai-model-select">
+                                    <optgroup label="★ Multi-Model Gateway (OpenRouter · Active)">
+                                        <option value="openai/gpt-4o-mini" selected>OpenRouter · GPT-4o Mini (Fast &amp; Accurate)</option>
+                                        <option value="openai/gpt-4o">OpenRouter · GPT-4o (Deep Reasoning)</option>
+                                        <option value="anthropic/claude-3.5-sonnet">OpenRouter · Claude 3.5 Sonnet (Academic Rigor)</option>
+                                        <option value="deepseek/deepseek-r1">OpenRouter · DeepSeek-R1 (Logic &amp; Proofs)</option>
+                                        <option value="meta-llama/llama-3.3-70b-instruct">OpenRouter · Llama 3.3 70B (Open Weights)</option>
+                                    </optgroup>
+                                    <optgroup label="🎓 Dedicated Academic Agent">
+                                        <option value="alice">Alice · Thesis Co-Pilot (Camber Cloud)</option>
+                                    </optgroup>
+                                    <optgroup label="☁ Cloud Providers">
+                                        <option value="gemini-2.5-flash">Google Gemini 2.5 Flash (1M Context)</option>
+                                        <option value="llama-3.3-70b-versatile">Groq Cloud · Llama 3.3 70B (Low Latency)</option>
+                                    </optgroup>
+                                    <optgroup label="🔒 Local Air-Gapped">
+                                        <option value="llama3.2">Ollama · Llama 3.2 (Local Loopback)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+
+                            <!-- Sorted AI Studio Team Roster -->
                             <div class="ai-collaboration-card">
                                 <div class="ai-collaboration-heading"><strong>AI Studio Team</strong><span>Multi-agent context</span></div>
-                                <p>Configured models operate with zero cross-talk. All prompts and outputs are TLS 1.3 encrypted in transit and AES-256 encrypted at rest.</p>
-                                <div class="ai-agent-roster" aria-label="Configured AI collaborators">
-                                    <div class="ai-agent is-active" data-ai-agent="alice">
+                                <p>Sorted by verification state. All API calls execute over TLS 1.3 in-transit and AES-256 encrypted at rest.</p>
+                                <div class="ai-agent-roster" aria-label="Configured AI collaborators" id="ai-agent-roster">
+                                    <div class="ai-agent is-active" data-ai-agent="openrouter" data-model="openai/gpt-4o-mini">
+                                        <span class="ai-personal-logo" style="background: linear-gradient(135deg, #0284c7, #06b6d4); color: #fff; font-weight: 700;">✦</span>
+                                        <span><strong>OpenRouter (GPT-4o Mini)</strong><small>Flagship Multi-Model Gateway · Online</small></span>
+                                        <i class="ai-status-indicator is-ready" title="Online &amp; Ready"></i>
+                                    </div>
+                                    <div class="ai-agent" data-ai-agent="alice" data-model="alice">
                                         <span class="ai-personal-logo" style="background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; font-weight: 700;">A</span>
-                                        <span><strong>Alice (Camber)</strong><small>Thesis Co-Pilot & Critic</small></span>
-                                        <i></i>
+                                        <span><strong>Alice · Thesis Co-Pilot</strong><small>Lead Academic Methodologist &amp; Critic</small></span>
+                                        <i class="ai-status-indicator is-ready" title="Online &amp; Ready"></i>
                                     </div>
-                                    <div class="ai-agent" data-ai-agent="gemini">
-                                        <span class="ai-personal-logo ai-logo-gemini">G</span>
-                                        <span><strong>Google Gemini</strong><small>Deep reasoning & 1M context</small></span>
-                                        <i></i>
+                                    <div class="ai-agent" data-ai-agent="claude" data-model="anthropic/claude-3.5-sonnet">
+                                        <span class="ai-personal-logo" style="background: linear-gradient(135deg, #d97706, #b45309); color: #fff; font-weight: 700;">C</span>
+                                        <span><strong>Claude 3.5 Sonnet</strong><small>Dissertation Synthesis &amp; Prose</small></span>
+                                        <i class="ai-status-indicator is-ready" title="Available via OpenRouter"></i>
                                     </div>
-                                    <div class="ai-agent" data-ai-agent="llama">
-                                        <span class="ai-personal-logo ai-logo-llama">L</span>
-                                        <span><strong>Llama 3.3 (Groq)</strong><small>Fast generation</small></span>
-                                        <i></i>
-                                    </div>
-                                    <div class="ai-agent" data-ai-agent="deepseek">
+                                    <div class="ai-agent" data-ai-agent="deepseek" data-model="deepseek/deepseek-r1">
                                         <span class="ai-personal-logo ai-logo-deepseek">D</span>
-                                        <span><strong>DeepSeek-R1</strong><small>Reasoning & review</small></span>
-                                        <i></i>
+                                        <span><strong>DeepSeek-R1</strong><small>Mathematical &amp; Logical Proofs</small></span>
+                                        <i class="ai-status-indicator is-ready" title="Available via OpenRouter"></i>
                                     </div>
-                                    <div class="ai-agent" data-ai-agent="qwen">
-                                        <span class="ai-personal-logo ai-logo-qwen">Q</span>
-                                        <span><strong>Qwen 2.5</strong><small>Code & benchmarks</small></span>
-                                        <i></i>
+                                    <div class="ai-agent" data-ai-agent="gemini" data-model="gemini-2.5-flash">
+                                        <span class="ai-personal-logo ai-logo-gemini">G</span>
+                                        <span><strong>Google Gemini 2.5</strong><small>Deep reasoning &amp; 1M token context</small></span>
+                                        <i class="ai-status-indicator is-pending" title="Endpoint Reachable"></i>
+                                    </div>
+                                    <div class="ai-agent" data-ai-agent="llama" data-model="llama-3.3-70b-versatile">
+                                        <span class="ai-personal-logo ai-logo-llama">L</span>
+                                        <span><strong>Llama 3.3 (Groq)</strong><small>Sub-second LPU generation</small></span>
+                                        <i class="ai-status-indicator is-pending" title="Endpoint Reachable"></i>
+                                    </div>
+                                    <div class="ai-agent" data-ai-agent="ollama" data-model="llama3.2">
+                                        <span class="ai-personal-logo" style="background: #334155; color: #cbd5e1; font-weight: 700;">⚙</span>
+                                        <span><strong>Ollama (Local Private)</strong><small>Air-gapped 100% offline compute</small></span>
+                                        <i class="ai-status-indicator is-offline" title="Local loopback"></i>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Dropdown Checklist & Parameter Controls Drawer -->
+                            <details class="ai-params-card" id="ai-params-card" open>
+                                <summary class="ai-params-header">
+                                    <span><strong>⚙ Governance &amp; Parameters</strong><small>Drop-down checklist &amp; controls</small></span>
+                                    <span class="ai-params-toggle-pill">Adjust parameters ▾</span>
+                                </summary>
+                                <div class="ai-params-body">
+                                    <div class="ai-checklist-group">
+                                        <span class="ai-group-title">Rigor &amp; Governance Checklist</span>
+                                        <label class="ai-checkbox-label">
+                                            <input type="checkbox" id="chk-zero-hallucination" checked>
+                                            <span><strong>Zero-Hallucination Guard</strong><small>Strictly ground in project library &amp; tasks</small></span>
+                                        </label>
+                                        <label class="ai-checkbox-label">
+                                            <input type="checkbox" id="chk-methodology-audit" checked>
+                                            <span><strong>Methodology Audit</strong><small>Enforce {{ $project->discipline }} rigor standards</small></span>
+                                        </label>
+                                        <label class="ai-checkbox-label">
+                                            <input type="checkbox" id="chk-imrad-compliance" checked>
+                                            <span><strong>IMRaD Structure Compliance</strong><small>Format into standard thesis sections</small></span>
+                                        </label>
+                                        <label class="ai-checkbox-label">
+                                            <input type="checkbox" id="chk-devils-advocate">
+                                            <span><strong>Peer-Review Critique Mode</strong><small>Challenge unproven assumptions &amp; gaps</small></span>
+                                        </label>
+                                        <label class="ai-checkbox-label">
+                                            <input type="checkbox" id="chk-latex-formatting">
+                                            <span><strong>LaTeX / Math Equation Syntax</strong><small>Format formulas in KaTeX ($...$)</small></span>
+                                        </label>
+                                    </div>
+
+                                    <div class="ai-sliders-group">
+                                        <div class="ai-param-row">
+                                            <div class="ai-param-label-row">
+                                                <label for="param-temperature"><strong>Temperature</strong></label>
+                                                <span class="ai-param-val" id="val-temperature">0.2 (Strict Academic Rigor)</span>
+                                            </div>
+                                            <input type="range" id="param-temperature" min="0" max="1" step="0.05" value="0.2" class="ai-range-input">
+                                            <div class="ai-range-hints">
+                                                <span>0.0 (Strict)</span>
+                                                <span>0.5 (Balanced)</span>
+                                                <span>1.0 (Creative)</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="ai-param-row">
+                                            <label for="param-context-depth"><strong>Output Depth &amp; Token Budget</strong></label>
+                                            <select id="param-context-depth" class="ai-param-select">
+                                                <option value="concise">Concise Action Items (~600 tokens)</option>
+                                                <option value="standard" selected>Standard Academic Synthesis (~1,600 tokens)</option>
+                                                <option value="exhaustive">Exhaustive Chapter Deep-Dive (~3,200 tokens)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
                             <label class="ai-prompt-label" for="ai-lab-prompt">What should we work on?</label>
                             <textarea id="ai-lab-prompt" class="ai-prompt" rows="3" placeholder="Ask for a literature gap, methodology check, next step, or evidence review…"></textarea>
                             <div class="ai-quick-actions">

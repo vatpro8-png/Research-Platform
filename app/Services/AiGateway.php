@@ -91,18 +91,24 @@ class AiGateway
      * @param  array<int, array{role: string, content: string}>  $messages
      * @return array<string, mixed>
      */
-    public function chat(array $messages): array
+    public function chat(array $messages, ?string $model = null, ?float $temperature = null, ?int $maxTokens = null): array
     {
         if (! $this->configured()) {
-            throw new RuntimeException('The AI gateway is not configured. Set GEMINI_API_KEY, GROQ_API_KEY, or configure AI_BASE_URL and AI_MODEL.');
+            throw new RuntimeException('The AI gateway is not configured. Set OPENROUTER_API_KEY, GEMINI_API_KEY, GROQ_API_KEY, or configure AI_BASE_URL and AI_MODEL.');
+        }
+
+        $payload = [
+            'model' => $model ?: $this->model(),
+            'messages' => $messages,
+            'temperature' => $temperature ?? (float) config('services.ai.temperature', 0.2),
+        ];
+
+        if ($maxTokens !== null) {
+            $payload['max_tokens'] = $maxTokens;
         }
 
         return $this->request()
-            ->post('/chat/completions', [
-                'model' => $this->model(),
-                'messages' => $messages,
-                'temperature' => (float) config('services.ai.temperature', 0.2),
-            ])
+            ->post('/chat/completions', $payload)
             ->throw()
             ->json();
     }

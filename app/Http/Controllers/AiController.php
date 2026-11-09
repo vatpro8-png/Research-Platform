@@ -29,15 +29,67 @@ class AiController extends Controller
     {
         $validated = $request->validate([
             'instruction' => ['nullable', 'string', 'max:1000'],
+            'model' => ['nullable', 'string', 'max:100'],
+            'temperature' => ['nullable', 'numeric', 'min:0', 'max:1'],
+            'depth' => ['nullable', 'string', 'in:concise,standard,exhaustive'],
+            'checklist' => ['nullable', 'array'],
         ]);
 
-        $project->load(['members:id,name', 'tasks', 'feedback', 'papers:id,research_project_id,title,abstract,status']);
+        $project->load(['members:id,name', 'tasks', 'feedback', 'papers:id,research_project_id,title,abstract,status', 'citations']);
+
+        $systemInstructions = [
+            'You are a rigorous university research assistant and academic methodology auditor.',
+            'Do not invent sources, findings, citations, or empirical statistics.',
+        ];
+
+        $checklist = (array) ($validated['checklist'] ?? []);
+        if (! empty($checklist['zero_hallucination'])) {
+            $systemInstructions[] = 'ZERO-HALLUCINATION ENFORCEMENT: Strictly ground all assertions in the supplied project context, citations, and verified papers. Reject speculative claims.';
+        }
+        if (! empty($checklist['methodology_audit'])) {
+            $systemInstructions[] = "METHODOLOGY COMPLIANCE: Audit suggestions against the project's selected discipline ({$project->discipline}) and methodology ({$project->methodology}). Ensure empirical rigor.";
+        }
+        if (! empty($checklist['imrad_compliance'])) {
+            $systemInstructions[] = 'IMRAD STRUCTURAL CONVENTIONS: Format responses to comply with standard academic sections (Introduction, Methodology, Results/Analysis, Discussion).';
+        }
+        if (! empty($checklist['devils_advocate'])) {
+            $systemInstructions[] = 'PEER REVIEW CRITIQUE MODE: Act as a demanding journal peer reviewer. Actively identify weaknesses, unaddressed counter-evidence, and methodological gaps.';
+        }
+        if (! empty($checklist['latex_formatting'])) {
+            $systemInstructions[] = 'MATHEMATICAL & STATISTICAL NOTATION: Format all formulas, statistical variables (p-values, N, t-test, ANOVA), and mathematical definitions in KaTeX/LaTeX ($...$).';
+        }
+
+        $systemPrompt = implode("\n", $systemInstructions);
+
+        $temperature = isset($validated['temperature'])
+            ? (float) $validated['temperature']
+            : (float) config('services.ai.temperature', 0.2);
+
+        $maxTokens = match ($validated['depth'] ?? 'standard') {
+            'concise' => 600,
+            'exhaustive' => 3200,
+            default => 1600,
+        };
+
+        $model = ! empty($validated['model']) ? (string) $validated['model'] : null;
+        if ($model && $ai->provider() === 'OpenRouter') {
+            $model = match ($model) {
+                'gemini', 'gemini-2.5-flash' => 'google/gemini-2.5-flash',
+                'llama', 'llama-3.3-70b-versatile' => 'meta-llama/llama-3.3-70b-instruct',
+                'deepseek' => 'deepseek/deepseek-r1',
+                'claude' => 'anthropic/claude-3.5-sonnet',
+                'gpt4o' => 'openai/gpt-4o',
+                'gpt4omini' => 'openai/gpt-4o-mini',
+                'alice' => 'openai/gpt-4o-mini',
+                default => $model,
+            };
+        }
 
         try {
             $result = $ai->chat([
                 [
                     'role' => 'system',
-                    'content' => 'You are a careful university research assistant. Do not invent sources, findings, or citations. Return concise, actionable academic guidance.',
+                    'content' => $systemPrompt,
                 ],
                 [
                     'role' => 'user',
@@ -46,19 +98,26 @@ class AiController extends Controller
                         'project' => [
                             'title' => $project->title,
                             'discipline' => $project->discipline,
+                            'methodology' => $project->methodology,
                             'description' => $project->description,
                             'progress' => $project->progress,
                             'open_tasks' => $project->tasks->where('status', '!=', 'done')->pluck('title')->values(),
                             'open_feedback' => $project->feedback->where('status', 'open')->pluck('body')->values(),
+                            'citations' => $project->citations->pluck('title')->take(10)->values(),
                             'papers' => $project->papers->map(fn ($paper): array => [
                                 'title' => $paper->title,
                                 'abstract' => $paper->abstract,
                                 'status' => $paper->status,
                             ])->values(),
                         ],
+                        'parameters' => [
+                            'temperature' => $temperature,
+                            'depth' => $validated['depth'] ?? 'standard',
+                            'active_rules' => array_keys(array_filter($checklist)),
+                        ],
                     ], JSON_THROW_ON_ERROR),
                 ],
-            ]);
+            ], $model, $temperature, $maxTokens);
         } catch (Throwable $exception) {
             Log::warning('AI summary service unavailable: '.$exception->getMessage());
 
@@ -67,8 +126,9 @@ class AiController extends Controller
 
         return response()->json([
             'data' => [
-                'model' => $result['model'] ?? $ai->model(),
+                'model' => $result['model'] ?? ($model ?: $ai->model()),
                 'provider' => $ai->provider(),
+                'temperature' => $temperature,
                 'content' => data_get($result, 'choices.0.message.content'),
             ],
         ]);

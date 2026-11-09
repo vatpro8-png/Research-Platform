@@ -228,6 +228,49 @@ class CoreArchitectureAndAiAccessTest extends TestCase
         $this->assertCount(6, $response->json('data.matrix'));
     }
 
+    public function test_ai_summary_endpoint_accepts_custom_model_and_checklist_parameters(): void
+    {
+        config()->set('services.ai.free_access', true);
+        config()->set('services.ai.base_url', 'https://openrouter.ai/api/v1');
+        config()->set('services.ai.key', 'fake-key');
+
+        $user = User::factory()->create();
+        $project = ResearchProject::create([
+            'owner_id' => $user->id,
+            'title' => 'Quantum Cryptography Protocol Validation',
+            'discipline' => 'Computer Science',
+            'methodology' => 'Formal Methods',
+        ]);
+        $project->members()->attach($user->id, ['role' => 'student']);
+
+        Http::fake([
+            'https://openrouter.ai/api/v1/chat/completions' => Http::response([
+                'model' => 'anthropic/claude-3.5-sonnet',
+                'choices' => [
+                    ['message' => ['content' => 'Grounded academic audit with zero hallucination.']],
+                ],
+            ], 200),
+        ]);
+
+        $response = $this->actingAs($user)
+            ->postJson("/api/v1/projects/{$project->id}/ai/summary", [
+                'instruction' => 'Perform peer review audit',
+                'model' => 'anthropic/claude-3.5-sonnet',
+                'temperature' => 0.15,
+                'depth' => 'exhaustive',
+                'checklist' => [
+                    'zero_hallucination' => true,
+                    'methodology_audit' => true,
+                    'imrad_compliance' => true,
+                ],
+            ]);
+
+        $response->assertOk()
+            ->assertJsonPath('data.model', 'anthropic/claude-3.5-sonnet')
+            ->assertJsonPath('data.temperature', 0.15)
+            ->assertJsonPath('data.content', 'Grounded academic audit with zero hallucination.');
+    }
+
     public function test_ai_methodology_matrix_respects_qualitative_preference(): void
     {
         config()->set('services.ai.free_access', true);
