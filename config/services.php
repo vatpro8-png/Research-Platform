@@ -46,24 +46,42 @@ return [
         'free_access' => (bool) env('AI_FREE_FOR_ALL', false),
         'base_url' => env(
             'AI_BASE_URL',
-            env('GEMINI_API_KEY')
-                ? env('GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com/v1beta/openai')
-                : (env('GROQ_API_KEY')
-                    ? env('GROQ_BASE_URL', 'https://api.groq.com/openai/v1')
-                    : 'http://127.0.0.1:11434/v1')
+            env('OPENROUTER_API_KEY')
+                ? env('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1')
+                : (env('GEMINI_API_KEY')
+                    ? env('GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com/v1beta/openai')
+                    : (env('GROQ_API_KEY')
+                        ? env('GROQ_BASE_URL', 'https://api.groq.com/openai/v1')
+                        : 'http://127.0.0.1:11434/v1'))
         ),
-        'key' => env('AI_API_KEY', env('GEMINI_API_KEY', env('GROQ_API_KEY'))),
+        'key' => env('AI_API_KEY', env('OPENROUTER_API_KEY', env('GEMINI_API_KEY', env('GROQ_API_KEY')))),
         'model' => env(
             'AI_MODEL',
-            env('GEMINI_API_KEY')
-                ? env('GEMINI_MODEL', 'gemini-2.5-flash')
-                : (env('GROQ_API_KEY')
-                    ? env('GROQ_MODEL', 'llama-3.3-70b-versatile')
-                    : 'llama3.2')
+            env('OPENROUTER_API_KEY')
+                ? env('OPENROUTER_MODEL', 'openai/gpt-4o-mini')
+                : (env('GEMINI_API_KEY')
+                    ? env('GEMINI_MODEL', 'gemini-2.5-flash')
+                    : (env('GROQ_API_KEY')
+                        ? env('GROQ_MODEL', 'llama-3.3-70b-versatile')
+                        : 'llama3.2'))
         ),
         'timeout' => env('AI_TIMEOUT', 30),
         'connect_timeout' => env('AI_CONNECT_TIMEOUT', 5),
         'temperature' => env('AI_TEMPERATURE', 0.2),
+    ],
+
+    'openrouter' => [
+        'base_url' => env('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1'),
+        'key' => env('OPENROUTER_API_KEY'),
+        'model' => env('OPENROUTER_MODEL', 'openai/gpt-4o-mini'),
+        'models' => [
+            'openai/gpt-4o-mini' => 'OpenAI GPT-4o Mini (Fast & Intelligent)',
+            'openai/gpt-4o' => 'OpenAI GPT-4o (State-of-the-Art Reasoning)',
+            'anthropic/claude-3.5-sonnet' => 'Claude 3.5 Sonnet (Academic Writing & Rigor)',
+            'deepseek/deepseek-r1' => 'DeepSeek R1 (Advanced Reasoning & Logic)',
+            'meta-llama/llama-3.3-70b-instruct' => 'Meta Llama 3.3 70B Instruct',
+            'google/gemini-2.5-flash' => 'Google Gemini 2.5 Flash',
+        ],
     ],
 
     'gemini' => [

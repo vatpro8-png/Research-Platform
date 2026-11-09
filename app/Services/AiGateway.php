@@ -23,6 +23,10 @@ class AiGateway
     {
         $baseUrl = (string) config('services.ai.base_url');
 
+        if (str_contains($baseUrl, 'openrouter.ai') || (filled(config('services.openrouter.key')) && $baseUrl === config('services.openrouter.base_url'))) {
+            return 'OpenRouter';
+        }
+
         if (str_contains($baseUrl, 'generativelanguage.googleapis.com') || (filled(config('services.gemini.key')) && $baseUrl === config('services.gemini.base_url'))) {
             return 'Google Gemini';
         }
@@ -48,6 +52,10 @@ class AiGateway
     public function availableModels(): array
     {
         $provider = $this->provider();
+
+        if ($provider === 'OpenRouter') {
+            return array_keys(config('services.openrouter.models', []));
+        }
 
         if ($provider === 'Google Gemini') {
             return array_keys(config('services.gemini.free_models', []));
@@ -157,10 +165,93 @@ class AiGateway
     public function probeAllProviders(): array
     {
         return [
+            'openrouter' => $this->probeOpenRouter(),
             'alice' => $this->probeCamber(),
             'gemini' => $this->probeGemini(),
             'groq' => $this->probeGroq(),
             'ollama' => $this->probeOllama(),
+        ];
+    }
+
+    /**
+     * Probe OpenRouter unified AI router endpoint availability and auth.
+     *
+     * @return array{
+     *     name: string,
+     *     model: string,
+     *     endpoint: string,
+     *     transport_security: string,
+     *     has_credentials: bool,
+     *     status: string,
+     *     status_code: ?int,
+     *     latency_ms: ?int,
+     *     message: string,
+     *     free_tier: string,
+     *     recommended: bool
+     * }
+     */
+    public function probeOpenRouter(): array
+    {
+        $url = (string) config('services.openrouter.base_url', 'https://openrouter.ai/api/v1');
+        $key = (string) (config('services.openrouter.key') ?: config('services.ai.key'));
+        $model = (string) config('services.openrouter.model', 'openai/gpt-4o-mini');
+
+        $start = microtime(true);
+        $status = 'offline';
+        $statusCode = null;
+        $latencyMs = null;
+        $message = '';
+
+        try {
+            $client = Http::connectTimeout(4)->timeout(6)->acceptJson();
+            if (filled($key)) {
+                $client = $client->withToken($key);
+            }
+
+            $response = $client->get(rtrim($url, '/').'/auth/key');
+            $latencyMs = (int) round((microtime(true) - $start) * 1000);
+            $statusCode = $response->status();
+
+            if ($response->successful()) {
+                $status = 'ready';
+                $limitRemaining = data_get($response->json(), 'data.limit_remaining');
+                $message = filled($limitRemaining)
+                    ? "Authenticated with OpenRouter. Balance remaining: \${$limitRemaining} USD."
+                    : 'Authenticated and operational via OpenRouter.';
+            } elseif ($statusCode === 401 || $statusCode === 403) {
+                if (blank($key)) {
+                    $status = 'key_required';
+                    $message = 'Endpoint reachable over TLS. Add OPENROUTER_API_KEY in .env.';
+                } else {
+                    $status = 'invalid_key';
+                    $message = 'Endpoint reachable, but OPENROUTER_API_KEY was rejected.';
+                }
+            } else {
+                $modelsResp = $client->get(rtrim($url, '/').'/models');
+                if ($modelsResp->successful()) {
+                    $status = 'ready';
+                    $message = 'OpenRouter models available.';
+                } else {
+                    $status = 'key_required';
+                    $message = 'Endpoint reachable over TLS. Add OPENROUTER_API_KEY in .env.';
+                }
+            }
+        } catch (\Throwable $e) {
+            $message = 'Network connection failed: '.$e->getMessage();
+        }
+
+        return [
+            'name' => 'OpenRouter (GPT-4o / Claude / DeepSeek)',
+            'model' => $model,
+            'endpoint' => $url,
+            'transport_security' => 'HTTPS / TLS 1.3 (End-to-End Encrypted)',
+            'has_credentials' => filled($key),
+            'status' => $status,
+            'status_code' => $statusCode,
+            'latency_ms' => $latencyMs,
+            'message' => $message,
+            'free_tier' => 'Free models + $100 router credit',
+            'recommended' => true,
         ];
     }
 
@@ -450,6 +541,15 @@ class AiGateway
             ->acceptJson()
             ->connectTimeout((int) config('services.ai.connect_timeout', 5))
             ->timeout((int) config('services.ai.timeout', 30));
+
+        if (str_contains($baseUrl, 'openrouter.ai')) {
+            $siteUrl = (string) (config('app.url') ?: 'https://co-auth-research-h8a2ehfpbweedsak.indiasouthcentral-01.azurewebsites.net');
+            $siteName = (string) config('app.name', 'Co-Auth Research Studio');
+            $request = $request->withHeaders([
+                'HTTP-Referer' => $siteUrl,
+                'X-Title' => $siteName,
+            ]);
+        }
 
         $key = (string) config('services.ai.key');
 

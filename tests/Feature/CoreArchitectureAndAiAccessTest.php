@@ -140,6 +140,18 @@ class CoreArchitectureAndAiAccessTest extends TestCase
         $gateway->validateTransportSecurity('http://insecure-external-ai.com/v1');
     }
 
+    public function test_ai_gateway_recognizes_openrouter_provider(): void
+    {
+        config()->set('services.ai.base_url', 'https://openrouter.ai/api/v1');
+        config()->set('services.ai.model', 'openai/gpt-4o-mini');
+
+        $gateway = app(AiGateway::class);
+
+        $this->assertSame('OpenRouter', $gateway->provider());
+        $this->assertContains('openai/gpt-4o-mini', $gateway->availableModels());
+        $this->assertContains('anthropic/claude-3.5-sonnet', $gateway->availableModels());
+    }
+
     public function test_ai_gateway_recognizes_google_gemini_provider(): void
     {
         config()->set('services.ai.base_url', 'https://generativelanguage.googleapis.com/v1beta/openai');
@@ -156,6 +168,7 @@ class CoreArchitectureAndAiAccessTest extends TestCase
         $user = User::factory()->create();
 
         Http::fake([
+            'https://openrouter.ai*' => Http::response(['data' => ['limit_remaining' => 100]], 200),
             'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions' => Http::response(['choices' => []], 200),
             'https://api.groq.com/openai/v1/models' => Http::response(['data' => []], 200),
             'http://127.0.0.1:11434/api/tags' => Http::response(['models' => [['name' => 'llama3.2']]], 200),
@@ -165,6 +178,7 @@ class CoreArchitectureAndAiAccessTest extends TestCase
         $response = $this->actingAs($user)->getJson('/api/v1/ai/status');
 
         $response->assertOk()
+            ->assertJsonPath('data.providers.openrouter.status', 'ready')
             ->assertJsonPath('data.providers.alice.status', 'ready')
             ->assertJsonPath('data.providers.gemini.status', 'ready')
             ->assertJsonPath('data.providers.groq.status', 'ready')
@@ -174,6 +188,7 @@ class CoreArchitectureAndAiAccessTest extends TestCase
     public function test_ai_check_command_runs_successfully(): void
     {
         Http::fake([
+            'https://openrouter.ai*' => Http::response(['data' => ['limit_remaining' => 100]], 200),
             'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions' => Http::response(['choices' => []], 200),
             'https://api.groq.com/openai/v1/models' => Http::response(['data' => []], 200),
             'http://127.0.0.1:11434/api/tags' => Http::response(['models' => []], 200),
@@ -187,6 +202,10 @@ class CoreArchitectureAndAiAccessTest extends TestCase
     public function test_ai_methodology_matrix_endpoint_returns_structured_matrix_with_rules_and_sections(): void
     {
         config()->set('services.ai.free_access', true);
+        config()->set('services.ai.key', null);
+        config()->set('services.openrouter.key', null);
+        config()->set('services.ai.base_url', 'http://127.0.0.1:11434/v1');
+        Http::fake(['*' => Http::response([], 503)]);
 
         $user = User::factory()->create();
         $project = ResearchProject::create([
@@ -212,6 +231,10 @@ class CoreArchitectureAndAiAccessTest extends TestCase
     public function test_ai_methodology_matrix_respects_qualitative_preference(): void
     {
         config()->set('services.ai.free_access', true);
+        config()->set('services.ai.key', null);
+        config()->set('services.openrouter.key', null);
+        config()->set('services.ai.base_url', 'http://127.0.0.1:11434/v1');
+        Http::fake(['*' => Http::response([], 503)]);
 
         $user = User::factory()->create();
         $project = ResearchProject::create([
