@@ -238,17 +238,22 @@ body.layout-review .workspace-grid { grid-template-columns: 1.1fr 0.9fr; }
 .proposal-compass-grid p { color: var(--muted); font-size: 10px; line-height: 1.5; margin: 5px 0 0; }
 .compass-index, .node-state { color: var(--teal); font: 9px 'DM Mono', monospace; letter-spacing: .08em; }
 .proposal-note { color: var(--muted); font-size: 10px; line-height: 1.5; margin: 15px 0 0; }
-.studio-architecture { margin-bottom: 18px; }
-.architecture-tree { display: grid; gap: 7px; margin-top: 18px; }
+.studio-architecture { margin-bottom: 22px; }
+.studio-architecture .panel-heading h2 { font-size: 1.25rem !important; font-weight: 800 !important; letter-spacing: -0.02em; }
+.architecture-tree { display: grid; gap: 10px; margin-top: 18px; }
 .architecture-tree.is-collapsed .architecture-branch, .architecture-tree.is-collapsed + .architecture-detail { display: none; }
-.architecture-node { width: 100%; display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; padding: 11px 13px; border: 1px solid #e3ece9; background: #fbfdfc; color: var(--ink); text-align: left; cursor: pointer; }
-.architecture-node:hover, .architecture-node.is-selected { border-color: var(--teal); background: #f0f8f5; }
-.architecture-node small { display: block; color: var(--muted); font-size: 9px; line-height: 1.4; margin-top: 3px; }
-.architecture-node strong { font-size: 11px; }
-.node-marker { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: #d8efeb; color: var(--teal-dark); font: 10px 'DM Mono', monospace; font-weight: 700; }
-.architecture-branch { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding-left: 24px; position: relative; }
-.architecture-branch::before { content: ''; position: absolute; left: 11px; top: -7px; bottom: 50%; border-left: 1px solid #c9dfd8; }
-.architecture-detail { color: var(--muted); font-size: 10px; line-height: 1.5; margin: 12px 0 0; padding-left: 24px; }
+.architecture-node { width: 100%; display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 12px; padding: 14px 18px; border: 2px solid #cbd5e1; background: #ffffff !important; color: #000000 !important; text-align: left; cursor: pointer; border-radius: 6px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); transition: all 0.15s ease-in-out; }
+.architecture-node:hover { border-color: #0f172a !important; background: #f8fafc !important; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12); }
+.architecture-node.is-selected { border-color: #16a34a !important; background: #f0fdf4 !important; box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.28) !important; }
+.architecture-node strong { display: block; color: #000000 !important; font-size: 15px !important; font-weight: 800 !important; line-height: 1.35; letter-spacing: -0.015em; }
+.architecture-node small { display: block; color: #000000 !important; font-size: 12.5px !important; font-weight: 700 !important; line-height: 1.45; margin-top: 4px; opacity: 0.9; }
+.node-marker { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: #000000 !important; color: #ffffff !important; font: 13px 'DM Mono', monospace; font-weight: 900 !important; flex-shrink: 0; }
+.architecture-node.is-selected .node-marker { background: #16a34a !important; color: #ffffff !important; }
+.architecture-node .node-state { color: #000000 !important; font: 13px 'DM Mono', monospace !important; font-weight: 800 !important; letter-spacing: .06em; padding: 3px 8px; background: rgba(0, 0, 0, 0.07); border-radius: 4px; }
+.architecture-node.is-selected .node-state { background: rgba(22, 163, 74, 0.18); color: #15803d !important; }
+.architecture-branch { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding-left: 24px; position: relative; }
+.architecture-branch::before { content: ''; position: absolute; left: 11px; top: -10px; bottom: 50%; border-left: 2px solid #94a3b8; }
+.architecture-detail { color: #f8fafc !important; font-size: 13px !important; font-weight: 700 !important; line-height: 1.6; margin: 14px 0 0; padding-left: 24px; }
 .running-methodology { color: var(--teal); font-weight: 400; }
 .overleaf-guide { margin-top: 16px; padding: 13px; border: 1px solid #ddd5f1; background: #f8f5ff; color: #55487b; font-size: 10px; line-height: 1.5; }
 .overleaf-guide strong { display: block; color: #43366d; font-size: 11px; }
@@ -2531,5 +2536,68 @@ body.layout-review .workspace-grid { grid-template-columns: 1.1fr 0.9fr; }
     gap: 8px;
     margin-top: 10px;
 }
+
+/* Studio Architecture: Bold Black High-Contrast Override */
+.live-tech-ui .studio-architecture .architecture-node {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #cbd5e1 !important;
+}
+
+.live-tech-ui .studio-architecture .architecture-node:hover {
+    background: #f8fafc !important;
+    border-color: #0f172a !important;
+}
+
+.live-tech-ui .studio-architecture .architecture-node.is-selected {
+    background: #f0fdf4 !important;
+    border-color: #22c55e !important;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.35) !important;
+}
+
+.live-tech-ui .studio-architecture .architecture-node strong {
+    color: #000000 !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.015em !important;
+}
+
+.live-tech-ui .studio-architecture .architecture-node small {
+    color: #000000 !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    opacity: 0.92 !important;
+}
+
+.live-tech-ui .studio-architecture .node-marker {
+    background: #000000 !important;
+    color: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+}
+
+.live-tech-ui .studio-architecture .architecture-node.is-selected .node-marker {
+    background: #22c55e !important;
+    color: #000000 !important;
+}
+
+.live-tech-ui .studio-architecture .node-state {
+    color: #000000 !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    background: rgba(0, 0, 0, 0.08) !important;
+}
+
+.live-tech-ui .studio-architecture .architecture-node.is-selected .node-state {
+    color: #14532d !important;
+    background: rgba(34, 197, 94, 0.22) !important;
+}
+
+.live-tech-ui .studio-architecture .architecture-detail {
+    color: #f8fafc !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+}
+
 
 
