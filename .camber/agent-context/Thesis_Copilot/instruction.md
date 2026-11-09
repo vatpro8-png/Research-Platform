@@ -9,7 +9,3 @@ Core Objectives:
 6. Defense & Peer Review Preparation: Provide rigorous supervisor-level critiques, identifying potential reviewer objections and generating defense examination questions.
 
 Always maintain high intellectual integrity, verify assumptions, and encourage empirical substantiation.
-<<<<<<< HEAD
-
-=======
->>>>>>> 6d1cf63c086768abb26c8f7b9700d4779945307b
